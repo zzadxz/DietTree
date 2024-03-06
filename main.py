@@ -1,14 +1,50 @@
-import tkinter
-import customtkinter
+import tkinter as tk
+import csv
+from meal_picker import MealPicker
+from welcome_page import WelcomePage
+from side_panel import SidePanel
 
-# systme settings
-customtkinter.set_appearance_mode("System")
-customtkinter.set_default_color_theme("blue")
 
-# our app frame
-app = customtkinter.CTk()
-app.geometry("720x480")
-app.title("CSC111 Project")
+def load_meal_data(filepath):
+    """
+    Load meal data from a CSV file.
+    """
+    with open(filepath, mode='r', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        return list(reader)
 
-if __name__ == '__main__':
-    app.mainloop()  # start the app
+
+database = load_meal_data('database.csv')
+
+
+class MainApplication(tk.Tk):
+    """
+    Main application window.
+    """
+
+    def __init__(self):
+        super().__init__()
+
+        self.title('Main Application')
+        self.geometry('1000x600')
+
+        self.welcome_page = WelcomePage(self)
+        self.welcome_page.pack(side='right', fill='both', expand=True)
+
+        self.side_panel = SidePanel(self)
+        self.side_panel.pack(side='left', fill='y')
+
+        self.meal_picker = MealPicker(self, database, self.side_panel)
+        self.meal_picker.pack(side='left', fill='y')
+
+
+def main():
+    """
+    Main function to run the application.
+    """
+    app = MainApplication()
+    app.mainloop()
+
+
+if __name__ == "__main__":
+    main()

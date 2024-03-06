@@ -1,0 +1,12 @@
+# Ignore all XML files
+*.xml
+
+# Ignore IDE specific files
+.idea/
+*.iml
+
+# Ignore all __pycache__ directories
+__pycache__/
+
+# Ignore OS generated files
+.DS_Store
