@@ -46,8 +46,11 @@ class MealPicker(tk.Frame):
         }
 
         matches = []
+        target_meals = ['calories', 'protein', 'total_carb', 'sugar', 'total_fat']
+
         for meal in self.database:
-            if meal_name in meal['item'].lower():
+            adjusted_meal = {k: int(v) if v != 'NA' else v for k, v in meal.items() if k in target_meals}
+            if meal_name.lower() in meal['item'].lower():
                 within_range = True
                 for nutrient, get_range in nutrient_ranges.items():
                     slider_value = slider_values.get(nutrient)
@@ -56,7 +59,10 @@ class MealPicker(tk.Frame):
                     range_min, range_max = get_range(slider_values[nutrient])
                     if meal[nutrient] != 'NA':
                         meal_value = int(meal[nutrient])
-                    if not (range_min <= meal_value <= range_max):
+                        if not (range_min <= meal_value <= range_max):
+                            within_range = False
+                            break
+                    else:
                         within_range = False
                         break
                 if within_range:

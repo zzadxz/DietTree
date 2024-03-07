@@ -26,7 +26,9 @@ class MainApplication(tk.Tk):
         super().__init__()
 
         self.title('Main Application')
-        self.geometry('1000x600')
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        self.geometry(f'{screen_width}x{screen_height}')
 
         self.welcome_page = WelcomePage(self)
         self.welcome_page.pack(side='right', fill='both', expand=True)

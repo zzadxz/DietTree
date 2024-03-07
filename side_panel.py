@@ -18,7 +18,7 @@ class SidePanel(tk.Frame):
         self.slider_labels = {}
         self.slider_entries = {}
 
-        nutrients = {'Protein': 300, 'Carb': 500, 'Fat': 300, 'Calories': 5000, 'Sugar': 300}
+        nutrients = {'protein': 300, 'total_carb': 500, 'total_fat': 300, 'calories': 5000, 'sugar': 300}
         for nutrient in nutrients:
             frame = tk.Frame(self)
             frame.pack(padx=10, pady=10, fill='x')
