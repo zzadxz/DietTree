@@ -72,7 +72,7 @@ class Graph:
         else:
             raise ValueError
 
-    def get_allvertices(self, kind: str = '') -> set:
+    def get_all_vertices(self, kind: str = '') -> set:
         """Return a set of all vertex items in this graph.
 
         If kind != '', only return the items of the given vertex kind.
