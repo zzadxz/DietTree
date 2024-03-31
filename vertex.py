@@ -11,14 +11,14 @@ class Vertex:
 
     Instance Attributes:
         - item: The data stored in this vertex, representing a user or book.
-        - kind: The type of this vertex: 'user' or 'book'.
+        - kind: The type of this vertex: 'food', 'dessert', 'drink', or 'category'
         - neighbours: The vertices that are adjacent to this vertex.
         - TODO
 
     Representation Invariants:
         - self not in self.neighbours
         - all(self in u.neighbours for u in self.neighbours)
-        - self.kind in {'user', 'book'}
+        - self.kind in {'food', 'dessert', 'drink', 'category'}
         - TODO
     """
     item: Any
@@ -31,7 +31,7 @@ class Vertex:
         This vertex is initialized with no neighbours.
 
         Preconditions:
-            - kind in {'user', 'book'}
+            - kind in {'food', 'dessert', 'drink', 'category'}
         """
         self.item = item
         self.kind = kind
@@ -51,14 +51,14 @@ class WeightedVertex(Vertex):
 
     Instance Attributes:
         - item: The data stored in this vertex, representing a user or book.
-        - kind: The type of this vertex: 'user' or 'book'.
+        - kind: The type of this vertex: 'food', 'dessert', 'drink', or 'category'
         - neighbours: The vertices that are adjacent to this vertex, and their corresponding
             edge weights.
 
     Representation Invariants:
         - self not in self.neighbours
         - all(self in u.neighbours for u in self.neighbours)
-        - self.kind in {'user', 'book'}
+        - self.kind in {'food', 'dessert', 'drink', 'category'}
     """
     item: Any
     kind: str
@@ -79,11 +79,7 @@ class WeightedVertex(Vertex):
     # Part 2, Q2a
     ############################################################################
     def similarity_score_unweighted(self, other: WeightedVertex) -> float:
-        """Return the unweighted similarity score between this vertex and other.
-
-        The unweighted similarity score is calculated in the same way as the
-        similarity score for Vertex (from Exercise 3). That is, just look at edges,
-        and ignore the weights.
+        """Return the unweighted similarity score between this vertex and other
         """
 
         if self.degree() == 0 or other.degree() == 0:
@@ -98,8 +94,6 @@ class WeightedVertex(Vertex):
 
     def similarity_score_strict(self, other: WeightedVertex) -> float:
         """Return the strict weighted similarity score between this vertex and other.
-
-        See Exercise handout for details.
         """
 
         if self.degree() == 0 or other.degree() == 0:

@@ -4,7 +4,7 @@ from vertex import WeightedVertex
 from typing import Any, Union
 import csv
 
-#TODO EVERYTHING
+
 class Graph:
     """
     A graph used to represent a book review network.
@@ -26,7 +26,7 @@ class Graph:
         Do nothing if the given item is already in this graph.
 
         Preconditions:
-            - kind in {'user', 'book'}
+            - kind in {'food', 'dessert', 'drink', 'category'}
         """
         if item not in self.vertices:
             self.vertices[item] = Vertex(item, kind)
@@ -78,7 +78,7 @@ class Graph:
         If kind != '', only return the items of the given vertex kind.
 
         Preconditions:
-            - kind in {'', 'user', 'book'}
+            - kind in {'food', 'dessert', 'drink', 'category'}
         """
         if kind != '':
             return {v.item for v in self.vertices.values() if v.kind == kind}
@@ -86,14 +86,8 @@ class Graph:
             return set(self.vertices.keys())
 
 
-
-
-# TODO EVERYTHING
 class WeightedGraph(Graph):
     """A weighted graph used to represent a book review network that keeps track of review scores.
-
-    Note that this is a subclass of the Graph class from Exercise 3, and so inherits any methods
-    from that class that aren't overridden here.
     """
     # Private Instance Attributes:
     #     - _vertices:
@@ -115,7 +109,7 @@ class WeightedGraph(Graph):
         Do nothing if the given item is already in this graph.
 
         Preconditions:
-            - kind in {'user', 'book'}
+            - kind in {'food', 'dessert', 'drink', 'category'}
         """
         if item not in self._vertices:
             self._vertices[item] = WeightedVertex(item, kind)
@@ -196,7 +190,7 @@ class WeightedGraph(Graph):
     ############################################################################
     # Part 2, Q2c
     ############################################################################
-    def recommend_books(self, book: str, limit: int,
+    def recommend_books(self, food: str, limit: int,
                         score_type: str = 'unweighted') -> list[str]:
         """Return a list of up to <limit> recommended books based on similarity to the given book.
 
@@ -212,7 +206,7 @@ class WeightedGraph(Graph):
 
         The returned list should NOT contain:
             - the input book itself
-            - any book with a similarity score of 0 to the input book
+            - any food items with a similarity score of 0 to the input book
             - any duplicates
             - any vertices that represents a user (instead of a book)
 
@@ -221,20 +215,20 @@ class WeightedGraph(Graph):
         and only if there aren't enough books that meet the above criteria.
 
         Preconditions:
-            - book in self._vertices
-            - self._vertices[book].kind == 'book'
+            - food in self._vertices
+            - self._vertices[food].kind in {'food', 'dessert', 'drink'}
             - limit >= 1
             - score_type in {'unweighted', 'strict'}
         """
 
-        if book not in self._vertices or self._vertices[book].kind != 'book':
+        if food not in self._vertices or self._vertices[food].kind != 'book':
             raise ValueError
 
-        book_vertex = self._vertices[book]
+        book_vertex = self._vertices[food]
         scores = []
 
         for other in self._vertices.values():
-            if other.kind == 'book' and other.item != book:
+            if other.kind in {'food', 'dessert', 'drink'} and other.item != food:
                 if score_type == 'unweighted':
                     score = book_vertex.similarity_score_unweighted(other)
                 elif score_type == 'strict':
@@ -252,9 +246,9 @@ class WeightedGraph(Graph):
         return recommendations
 
 
-################################################################################
+# ###############################################################################
 # Part 2, Q1
-################################################################################
+# ###############################################################################
 def load_weighted_review_graph(reviews_file: str, book_names_file: str) -> WeightedGraph:
     """Return a book review WEIGHTED graph corresponding to the given datasets.
 
@@ -267,6 +261,7 @@ def load_weighted_review_graph(reviews_file: str, book_names_file: str) -> Weigh
         - book_names_file is the path to a CSV file corresponding to the book data
           format described on the assignment handout
     """
+    # TODO
 
     graph = WeightedGraph()
 
