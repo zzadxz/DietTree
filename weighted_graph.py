@@ -1,7 +1,7 @@
-from weighted_vertex import WeightedVertex
-from graph import Graph
-from typing import Any, Union
-import csv
+
+
+
+# TODO EVERYTHING
 class WeightedGraph(Graph):
     """A weighted graph used to represent a book review network that keeps track of review scores.
 
@@ -31,7 +31,7 @@ class WeightedGraph(Graph):
             - kind in {'user', 'book'}
         """
         if item not in self._vertices:
-            self._vertices[item] = _WeightedVertex(item, kind)
+            self._vertices[item] = WeightedVertex(item, kind)
 
     def add_edge(self, item1: Any, item2: Any, weight: Union[int, float] = 1) -> None:
         """Add an edge between the two vertices with the given items in this graph,
