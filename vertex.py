@@ -62,6 +62,7 @@ class WeightedVertex(Vertex):
     """
     item: Any
     kind: str
+    range: range
     neighbours: dict[WeightedVertex, Union[int, float]]
 
     def __init__(self, item: Any, kind: str) -> None:
@@ -70,14 +71,11 @@ class WeightedVertex(Vertex):
         This vertex is initialized with no neighbours.
 
         Preconditions:
-            - kind in {'user', 'book'}
+            - self.kind in {'calories', 'proten'} # TODO (add the rest)
         """
         super().__init__(item, kind)
         self.neighbours = {}
 
-    ############################################################################
-    # Part 2, Q2a
-    ############################################################################
     def similarity_score_unweighted(self, other: WeightedVertex) -> float:
         """Return the unweighted similarity score between this vertex and other
         """
@@ -105,3 +103,23 @@ class WeightedVertex(Vertex):
             all_unique_neighbours = set(self.neighbours.keys()).union(set(other.neighbours.keys()))
 
             return len(common_neighbours_same_weight) / len(all_unique_neighbours)
+
+    def get_similarity_score(self, other: WeightedVertex) -> float:
+        """Return the similarity score between this vertex and other.
+        """
+        similarity = 0.0
+        shared_neighbours = set(self.neighbours.keys()).intersection(set(other.neighbours.keys()))
+        for v in shared_neighbours:
+            if v.kind == 'calories':
+                similarity += 10  # TODO (switch to variables from the slider)
+            elif v.kind == 'protein':
+                similarity += 5
+            elif v.kind == 'sugar':
+                similarity += 4
+            elif v.kind == 'fat':
+                similarity += 3
+            elif v.kind == 'carb' or v.kind == 'fiber':
+                similarity += 2
+            else:
+                similarity += 1
+        return similarity
