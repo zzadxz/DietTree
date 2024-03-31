@@ -44,7 +44,15 @@ class MealPicker(tk.Frame):
             'sugar': (lambda v: (v - 5, v + 5)),
             'total_fat': (lambda v: (v - 10, v + 10)),
         }
+        # (abs.(500/700) * 10) + (abs.(10/5) * 5)  = 10
+        # add_edge(big_mac, whopper, 10)
 
+        # calories1 = 200_300
+        # calories2 = 300_400
+        # sugar1 = 5-10
+        # ...
+        # food1 = big_mac
+        # f2 = whopper
         matches = []
         target_meals = ['calories', 'protein', 'total_carb', 'sugar', 'total_fat']
 
