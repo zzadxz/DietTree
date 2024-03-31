@@ -16,7 +16,6 @@ def load_meal_data(filepath):
 
 database = load_meal_data('database.csv')
 
-# Royce was here
 
 class MainApplication(tk.Tk):
     """
