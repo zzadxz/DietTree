@@ -1,8 +1,9 @@
 from __future__ import annotations
 from vertex import Vertex
 from vertex import WeightedVertex
-from typing import Any, Union
-import csv
+from typing import Any, Union, Optional
+import pandas as pd
+
 
 
 class Graph:
@@ -249,38 +250,58 @@ class WeightedGraph(Graph):
 # ###############################################################################
 # Part 2, Q1
 # ###############################################################################
-def load_weighted_review_graph(reviews_file: str, book_names_file: str) -> WeightedGraph:
+def convert_to_increment(value: str, increment: int) -> Optional[float]:
+    """Helper function to convert nutritional values into specified increments."""
+    try:
+        value = float(value.replace(' g', '').replace('mg', ''))
+        return round(value / increment) * increment
+    except (ValueError, TypeError):
+        return None
+
+
+def preprocess_dataframe(df: pd.DataFrame, categories: dict[str, int]) -> pd.DataFrame:
+    """Preprocess the dataframe to adjust nutritional values based on increments."""
+    for category, increment in categories.items():
+        df[category] = df[category].apply(lambda x: convert_to_increment(x, increment))
+    return df.dropna(subset=categories.keys(), how='all')
+
+
+def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict[str, int], weights: dict[str, int]) -> None:
+    item_name = row['Item']
+    item_category = row['Category'].lower()
+    item_data = row.to_dict()  # Convert the row to a dictionary for vertex data
+
+    # Pass item_data when adding a vertex
+    if item_name not in graph.get_all_vertices():
+        graph.add_vertex(item_data, item_category)
+
+    for category, _ in categories.items():
+        value = row[category]
+        if pd.notna(value):
+            category_vertex = f"{category}_{value}"
+            if category_vertex not in graph.get_all_vertices():
+                graph.add_vertex(category_vertex, category)
+            weight = weights.get(category, 1)  # Use default weight of 1 if not specified
+            graph.add_edge(item_name, category_vertex, weight)
+
+def load_weighted_review_graph(food_file: str, categories: dict[str, int], weights: dict[str, int]) -> WeightedGraph:
     """Return a book review WEIGHTED graph corresponding to the given datasets.
 
     This should be very similar to the corresponding function from Exercise 3, except now
     the book review scores are used as edge weights.
 
     Preconditions:
-        - reviews_file is the path to a CSV file corresponding to the book review data
-          format described on the assignment handout
-        - book_names_file is the path to a CSV file corresponding to the book data
-          format described on the assignment handout
+        - reviews_file is the path to a CSV file corresponding to the food datase
     """
-    # TODO
-
     graph = WeightedGraph()
+    df = pd.read_csv(food_file)
 
-    id_to_title = {}
-    with open(book_names_file, 'r') as file:
-        reader = csv.reader(file)
-        for book_id, title in reader:
-            id_to_title[book_id] = title
+    valid_categories = ['dessert', 'food', 'drink']
+    df = df[df['Category'].str.lower().isin(valid_categories)]
 
-    with open(reviews_file, 'r') as file:
-        reader = csv.reader(file)
-        for user_id, book_id, score in reader:
-            score = int(score)
-            if user_id not in graph.get_all_vertices('user'):
-                graph.add_vertex(user_id, 'user')
-            book_title = id_to_title.get(book_id)
-            if book_title and book_title not in graph.get_all_vertices('book'):
-                graph.add_vertex(book_title, 'book')
-            if book_title:
-                graph.add_edge(user_id, book_title, score)
+
+    df_filtered = preprocess_dataframe(df, categories)
+    for _, row in df_filtered.iterrows():
+        add_nutritional_edges(row, graph, categories, weights)
 
     return graph
