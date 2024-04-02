@@ -1,3 +1,5 @@
+"""The file houses our implementation of the vertex and weighted vertex classes. These are essential to our
+implementation of our graph classes."""
 from __future__ import annotations
 from typing import Any, Union
 
@@ -118,8 +120,30 @@ class WeightedVertex(Vertex):
                 similarity += 4
             elif v.kind == 'fat':
                 similarity += 3
-            elif v.kind == 'carb' or v.kind == 'fiber':
+            elif v.kind in {'carb', 'fiber'}:
                 similarity += 2
             else:
                 similarity += 1
         return similarity
+
+
+if __name__ == '__main__':
+    # You can uncomment the following lines for code checking/debugging purposes.
+    # However, we recommend commenting out these lines when working with the large
+    # datasets, as checking representation invariants and preconditions greatly
+    # # increases the running time of the functions/methods.
+    # import python_ta.contracts
+    # python_ta.contracts.check_all_contracts()
+
+    import doctest
+
+    doctest.testmod(verbose=True)
+
+    import python_ta
+
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'disable': ['E1136', 'W0221'],
+        'extra-imports': ['csv', 'networkx', 'pandas'],
+        'max-nested-blocks': 4,
+    })

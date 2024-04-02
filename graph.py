@@ -1,9 +1,11 @@
+""" This file houses the Graph and WeightedGraph classes and the load_weighted_graph method. This marks the
+technical backbone of our code and where much of the data analysis comes from.
+"""
 from __future__ import annotations
-from vertex import Vertex
-from vertex import WeightedVertex
 from typing import Any, Union, Optional
 import pandas as pd
-
+from vertex import Vertex
+from vertex import WeightedVertex
 
 
 class Graph:
@@ -266,7 +268,9 @@ def preprocess_dataframe(df: pd.DataFrame, categories: dict[str, int]) -> pd.Dat
     return df.dropna(subset=categories.keys(), how='all')
 
 
-def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict[str, int], weights: dict[str, int]) -> None:
+def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict[str, int],
+                          weights: dict[str, int]) -> None:
+    """Adds all the required edges between vertices initialized from each row in our csv"""
     item_name = row['Item']
     item_category = row['Category'].lower()
     item_data = row.to_dict()  # Convert the row to a dictionary for vertex data
@@ -275,7 +279,7 @@ def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict
     if item_name not in graph.get_all_vertices():
         graph.add_vertex(item_data, item_category)
 
-    for category, _ in categories.items():
+    for category in categories.keys():
         value = row[category]
         if pd.notna(value):
             category_vertex = f"{category}_{value}"
@@ -283,6 +287,7 @@ def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict
                 graph.add_vertex(category_vertex, category)
             weight = weights.get(category, 1)  # Use default weight of 1 if not specified
             graph.add_edge(item_name, category_vertex, weight)
+
 
 def load_weighted_review_graph(food_file: str, categories: dict[str, int], weights: dict[str, int]) -> WeightedGraph:
     """Return a book review WEIGHTED graph corresponding to the given datasets.
@@ -299,9 +304,30 @@ def load_weighted_review_graph(food_file: str, categories: dict[str, int], weigh
     valid_categories = ['dessert', 'food', 'drink']
     df = df[df['Category'].str.lower().isin(valid_categories)]
 
-
     df_filtered = preprocess_dataframe(df, categories)
     for _, row in df_filtered.iterrows():
         add_nutritional_edges(row, graph, categories, weights)
 
     return graph
+
+
+if __name__ == '__main__':
+    # You can uncomment the following lines for code checking/debugging purposes.
+    # However, we recommend commenting out these lines when working with the large
+    # datasets, as checking representation invariants and preconditions greatly
+    # # increases the running time of the functions/methods.
+    # import python_ta.contracts
+    # python_ta.contracts.check_all_contracts()
+
+    import doctest
+
+    doctest.testmod(verbose=True)
+
+    import python_ta
+
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'disable': ['E1136', 'W0221'],
+        'extra-imports': ['csv', 'networkx', 'pandas'],
+        'max-nested-blocks': 4,
+    })
