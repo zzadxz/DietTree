@@ -160,9 +160,6 @@ class WeightedGraph(Graph):
         else:
             raise ValueError
 
-    ############################################################################
-    # Part 2, Q2b
-    ############################################################################
     def get_similarity_score(self, item1: Any, item2: Any,
                              score_type: str = 'unweighted') -> float:
         """Return the similarity score between the two given items in this graph.
@@ -190,11 +187,8 @@ class WeightedGraph(Graph):
         else:
             raise ValueError
 
-    ############################################################################
-    # Part 2, Q2c
-    ############################################################################
     def recommend_books(self, food: str, limit: int,
-                        score_type: str = 'unweighted') -> list[str]:
+                        score_type: str = 'unweighted') -> list[str]:  # TODO (do we even need this?)
         """Return a list of up to <limit> recommended books based on similarity to the given book.
 
         score_type is one of 'unweighted' or 'strict', corresponding to the
@@ -249,9 +243,6 @@ class WeightedGraph(Graph):
         return recommendations
 
 
-# ###############################################################################
-# Part 2, Q1
-# ###############################################################################
 def convert_to_increment(value: str, increment: int) -> Optional[float]:
     """Helper function to convert nutritional values into specified increments."""
     try:
@@ -316,8 +307,8 @@ if __name__ == '__main__':
     # However, we recommend commenting out these lines when working with the large
     # datasets, as checking representation invariants and preconditions greatly
     # # increases the running time of the functions/methods.
-    # import python_ta.contracts
-    # python_ta.contracts.check_all_contracts()
+    import python_ta.contracts
+    python_ta.contracts.check_all_contracts()
 
     import doctest
 

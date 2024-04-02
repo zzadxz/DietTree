@@ -79,3 +79,24 @@ class MealPicker(tk.Frame):
         self.results_listbox.delete(0, tk.END)
         for meal in matches:
             self.results_listbox.insert(tk.END, f"Restaurant: {meal['restaurant']} - {meal['item']} - Calories: {meal['calories']} - Protein: {meal['protein']}")
+
+if __name__ == '__main__':
+    # You can uncomment the following lines for code checking/debugging purposes.
+    # However, we recommend commenting out these lines when working with the large
+    # datasets, as checking representation invariants and preconditions greatly
+    # # increases the running time of the functions/methods.
+    import python_ta.contracts
+    python_ta.contracts.check_all_contracts()
+
+    import doctest
+
+    doctest.testmod(verbose=True)
+
+    import python_ta
+
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'disable': ['E1136', 'W0221'],
+        'extra-imports': ['csv', 'networkx', 'pandas'],
+        'max-nested-blocks': 4,
+    })
