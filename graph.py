@@ -237,8 +237,7 @@ def preprocess_dataframe(df: pd.DataFrame, categories: dict[str, int]) -> pd.Dat
     return df.dropna(subset=categories.keys(), how='all')
 
 
-def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict[str, int],
-                          weights: dict[str, int]) -> None:
+def add_nutritional_edges(row: pd.Series, graph: Graph, categories: dict[str, int]) -> None:
     """Adds all the required edges between vertices initialized from each row in our csv"""
 
     item_name = row['Item']  # This comes from the filtered/preprocessed DataFrame
@@ -254,12 +253,11 @@ def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict
             category_vertex = f"{category}_{value}"
             if category_vertex not in graph.get_all_vertices():
                 graph.add_vertex(category_vertex, category)
-            weight = weights.get(category, 1)  # Use default weight of 1 if not specified
-            graph.add_edge(item_name, category_vertex, weight)
+            # weight = weights.get(category, 1)  # Use default weight of 1 if not specified
+            graph.add_edge(item_name, category_vertex)
 
 
-def load_weighted_review_graph(food_file: str, categories: dict[str, int],
-                               weights: dict[str, int]) -> (WeightedGraph, dict[Any, Any]):
+def load_graph(food_file: str, categories: dict[str, int]) -> (Graph, dict[Any, Any]):
 
     """Return a book review WEIGHTED graph corresponding to the given datasets.
 
@@ -269,7 +267,7 @@ def load_weighted_review_graph(food_file: str, categories: dict[str, int],
     Preconditions:
         - reviews_file is the path to a CSV file corresponding to the food datase
     """
-    graph = WeightedGraph()
+    graph = Graph()
     df = pd.read_csv(food_file)
     nutritional_info = {}
 
@@ -286,7 +284,7 @@ def load_weighted_review_graph(food_file: str, categories: dict[str, int],
         nutritional_info[item_name] = item_data  # Store in the separate dictionary
 
         # Now add the edge with the simplified item data (just name and kind)
-        add_nutritional_edges(row, graph, categories, weights)
+        add_nutritional_edges(row, graph, categories)
 
     return graph, nutritional_info
 
