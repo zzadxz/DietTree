@@ -78,53 +78,44 @@ class WeightedVertex(Vertex):
         super().__init__(item, kind)
         self.neighbours = {}
 
-    def similarity_score_unweighted(self, other: WeightedVertex) -> float:
-        """Return the unweighted similarity score between this vertex and other
+    def vertex_similarity_score(self, other: WeightedVertex, weightings: dict[str, float]) -> float:
+        """
+        Returns the similarity score between two food vertices.
+
+        Representation Invariants:
+            - self.kind in {'food', 'dessert', 'drink'}
+            - other.kind in {'food', 'dessert', 'drink'}
         """
 
-        if self.degree() == 0 or other.degree() == 0:
-            return 0.0
-        else:
-            self_neighbours = set(self.neighbours.keys())
-            other_neighbours = set(other.neighbours.keys())
-
-            intersection = self_neighbours.intersection(other_neighbours)
-            union = self_neighbours.union(other_neighbours)
-            return len(intersection) / len(union)
-
-    def similarity_score_strict(self, other: WeightedVertex) -> float:
-        """Return the strict weighted similarity score between this vertex and other.
-        """
-
-        if self.degree() == 0 or other.degree() == 0:
-            return 0.0
-        else:
-            common_neighbours_same_weight = {
-                u for u in self.neighbours if u in other.neighbours and self.neighbours[u] == other.neighbours[u]
-            }
-            all_unique_neighbours = set(self.neighbours.keys()).union(set(other.neighbours.keys()))
-
-            return len(common_neighbours_same_weight) / len(all_unique_neighbours)
-
-    def get_similarity_score(self, other: WeightedVertex) -> float:
-        """Return the similarity score between this vertex and other.
-        """
-        similarity = 0.0
+        if weightings is None:
+            weightings = {}
+        similarity = 0
         shared_neighbours = set(self.neighbours.keys()).intersection(set(other.neighbours.keys()))
+
         for v in shared_neighbours:
-            if v.kind == 'calories':
-                similarity += 10  # TODO (switch to variables from the slider)
-            elif v.kind == 'protein':
-                similarity += 5
-            elif v.kind == 'sugar':
-                similarity += 4
-            elif v.kind == 'fat':
-                similarity += 3
-            elif v.kind in {'carb', 'fiber'}:
-                similarity += 2
-            else:
-                similarity += 1
+            similarity += 1 * weightings[v.kind]
         return similarity
+
+    #
+    # def get_similarity_score(self, other: WeightedVertex) -> float:
+    #     """Return the similarity score between this vertex and other.
+    #     """
+    #     similarity = 0.0
+    #     shared_neighbours = set(self.neighbours.keys()).intersection(set(other.neighbours.keys()))
+    #     for v in shared_neighbours:
+    #         if v.kind == 'calories':
+    #             similarity += 10  # TODO (switch to variables from the slider)
+    #         elif v.kind == 'protein':
+    #             similarity += 5
+    #         elif v.kind == 'sugar':
+    #             similarity += 4
+    #         elif v.kind == 'fat':
+    #             similarity += 3
+    #         elif v.kind in {'carb', 'fiber'}:
+    #             similarity += 2
+    #         else:
+    #             similarity += 1
+    #     return similarity
 
 
 if __name__ == '__main__':

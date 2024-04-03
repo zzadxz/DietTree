@@ -1,5 +1,5 @@
 import tkinter as tk
-
+from graph import WeightedGraph
 
 class MealPicker(tk.Frame):
     """
@@ -34,6 +34,9 @@ class MealPicker(tk.Frame):
         self.results_listbox.config(yscrollcommand=scrollbar.set)
 
     def search_meals(self):
+        """
+        TODO
+        """
         meal_name = self.meal_entry.get().lower()
         slider_values = self.side_panel.get_slider_values()
 
@@ -78,7 +81,11 @@ class MealPicker(tk.Frame):
 
         self.results_listbox.delete(0, tk.END)
         for meal in matches:
-            self.results_listbox.insert(tk.END, f"Restaurant: {meal['restaurant']} - {meal['item']} - Calories: {meal['calories']} - Protein: {meal['protein']}")
+            self.results_listbox.insert(tk.END,
+                                        f"Restaurant: {meal['restaurant']} - {meal['item']} - Calories: {meal['calories']} - Protein: {meal['protein']}")
+
+    def return_similar_meals(self):
+        ...
 
 if __name__ == '__main__':
     # You can uncomment the following lines for code checking/debugging purposes.
@@ -86,6 +93,7 @@ if __name__ == '__main__':
     # datasets, as checking representation invariants and preconditions greatly
     # # increases the running time of the functions/methods.
     import python_ta.contracts
+
     python_ta.contracts.check_all_contracts()
 
     import doctest
