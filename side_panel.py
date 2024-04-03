@@ -32,6 +32,7 @@ class SidePanel(tk.Frame):
         nutrients = {'protein': 300, 'total_carb': 500, 'total_fat': 300, 'calories': 5000, 'sugar': 300}
         for nutrient in nutrients:
             frame = tk.Frame(self)
+            frame.grid(row=0, column=0)
             frame.pack(padx=10, pady=10, fill='x')
 
             label = tk.Label(frame, text=f"{nutrient}:")
@@ -43,6 +44,7 @@ class SidePanel(tk.Frame):
 
             slider = tk.Scale(frame, from_=0, to=nutrients[nutrient], orient='horizontal',
                               command=lambda value, nt=nutrient: self.update_entry_from_slider(nt))
+
             slider.pack(side='left', fill='x', expand=True)
             slider.bind('<B1-Motion>', lambda event, nt=nutrient: self.update_entry_from_slider(nt))
             self.sliders[nutrient] = slider
@@ -101,13 +103,6 @@ class SidePanel(tk.Frame):
 
 
 if __name__ == '__main__':
-    # You can uncomment the following lines for code checking/debugging purposes.
-    # However, we recommend commenting out these lines when working with the large
-    # datasets, as checking representation invariants and preconditions greatly
-    # # increases the running time of the functions/methods.
-    # import python_ta.contracts
-    # python_ta.contracts.check_all_contracts()
-
     import doctest
 
     doctest.testmod(verbose=True)

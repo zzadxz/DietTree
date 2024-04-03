@@ -149,19 +149,7 @@ class WeightedGraph(Graph):
         v2 = self._vertices[item2]
         return v1.neighbours.get(v2, 0)
 
-    def average_weight(self, item: Any) -> float:
-        """Return the average weight of the edges adjacent to the vertex corresponding to item.
-
-        Raise ValueError if item does not corresponding to a vertex in the graph.
-        """
-        if item in self._vertices:
-            v = self._vertices[item]
-            return sum(v.neighbours.values()) / len(v.neighbours)
-        else:
-            raise ValueError
-
-    def get_similarity_score(self, item1: Any, item2: Any,
-                             score_type: str = 'unweighted') -> float:
+    def get_similarity_score(self, main_food: Any, sample_food: Any, weighting: dict[str, float]) -> float:
         """Return the similarity score between the two given items in this graph.
 
         score_type is one of 'unweighted' or 'strict', corresponding to the
@@ -174,21 +162,15 @@ class WeightedGraph(Graph):
             - score_type in {'unweighted', 'strict'}
         """
 
-        if item1 not in self._vertices or item2 not in self._vertices:
+        if main_food not in self._vertices or sample_food not in self._vertices:
             raise ValueError
 
-        vertex1 = self._vertices[item1]
-        vertex2 = self._vertices[item2]
+        mainv = self._vertices[main_food]
+        samplev = self._vertices[sample_food]
 
-        if score_type == 'unweighted':
-            return vertex1.similarity_score_unweighted(vertex2)
-        elif score_type == 'strict':
-            return vertex1.similarity_score_strict(vertex2)
-        else:
-            raise ValueError
+        return mainv.vertex_similarity_score(samplev, weighting)
 
-    def recommend_books(self, food: str, limit: int,
-                        score_type: str = 'unweighted') -> list[str]:  # TODO (do we even need this?)
+    def recommend_meal(self, food: str, limit: int, weighting: dict[str, float]) -> list[str]:
         """Return a list of up to <limit> recommended books based on similarity to the given book.
 
         score_type is one of 'unweighted' or 'strict', corresponding to the
@@ -218,21 +200,15 @@ class WeightedGraph(Graph):
             - score_type in {'unweighted', 'strict'}
         """
 
-        if food not in self._vertices or self._vertices[food].kind != 'book':
+        if food not in self._vertices or self._vertices[food].kind not in {'food', 'dessert', 'drink'}:
             raise ValueError
 
-        book_vertex = self._vertices[food]
+        food_vertex = self._vertices[food]
         scores = []
 
         for other in self._vertices.values():
             if other.kind in {'food', 'dessert', 'drink'} and other.item != food:
-                if score_type == 'unweighted':
-                    score = book_vertex.similarity_score_unweighted(other)
-                elif score_type == 'strict':
-                    score = book_vertex.similarity_score_strict(other)
-                else:
-                    raise ValueError
-
+                score = food_vertex.vertex_similarity_score(other, weighting)
                 if score > 0:
                     scores.append((score, other.item))
 
