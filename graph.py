@@ -219,10 +219,12 @@ class WeightedGraph(Graph):
         return recommendations
 
 
-def convert_to_increment(value: str, increment: int) -> Optional[float]:
+def convert_to_increment(value: Any, increment: int) -> Optional[float]:
     """Helper function to convert nutritional values into specified increments."""
     try:
-        value = float(value.replace(' g', '').replace('mg', ''))
+        if isinstance(value, str):  # Check if the value is a string and needs cleaning
+            value = value.replace(' g', '').replace('mg', '')
+        value = float(value)  # Convert to float whether it was initially a string or already a float
         return round(value / increment) * increment
     except (ValueError, TypeError):
         return None
@@ -238,13 +240,13 @@ def preprocess_dataframe(df: pd.DataFrame, categories: dict[str, int]) -> pd.Dat
 def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict[str, int],
                           weights: dict[str, int]) -> None:
     """Adds all the required edges between vertices initialized from each row in our csv"""
-    item_name = row['Item']
+
+    item_name = row['Item']  # This comes from the filtered/preprocessed DataFrame
     item_category = row['Category'].lower()
-    item_data = row.to_dict()  # Convert the row to a dictionary for vertex data
 
     # Pass item_data when adding a vertex
     if item_name not in graph.get_all_vertices():
-        graph.add_vertex(item_data, item_category)
+        graph.add_vertex(item_name, item_category)
 
     for category in categories.keys():
         value = row[category]
@@ -256,7 +258,9 @@ def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict
             graph.add_edge(item_name, category_vertex, weight)
 
 
-def load_weighted_review_graph(food_file: str, categories: dict[str, int], weights: dict[str, int]) -> WeightedGraph:
+def load_weighted_review_graph(food_file: str, categories: dict[str, int],
+                               weights: dict[str, int]) -> (WeightedGraph, dict[Any, Any]):
+
     """Return a book review WEIGHTED graph corresponding to the given datasets.
 
     This should be very similar to the corresponding function from Exercise 3, except now
@@ -267,15 +271,24 @@ def load_weighted_review_graph(food_file: str, categories: dict[str, int], weigh
     """
     graph = WeightedGraph()
     df = pd.read_csv(food_file)
+    nutritional_info = {}
 
     valid_categories = ['dessert', 'food', 'drink']
     df = df[df['Category'].str.lower().isin(valid_categories)]
 
+    df_original = df.copy()
     df_filtered = preprocess_dataframe(df, categories)
-    for _, row in df_filtered.iterrows():
+
+    for index, row in df_filtered.iterrows():
+        original_row = df_original.loc[index]
+        item_name = original_row['Item']  # Assuming 'Item' holds the name
+        item_data = original_row.to_dict()  # Original values
+        nutritional_info[item_name] = item_data  # Store in the separate dictionary
+
+        # Now add the edge with the simplified item data (just name and kind)
         add_nutritional_edges(row, graph, categories, weights)
 
-    return graph
+    return graph, nutritional_info
 
 
 if __name__ == '__main__':
@@ -283,18 +296,16 @@ if __name__ == '__main__':
     # However, we recommend commenting out these lines when working with the large
     # datasets, as checking representation invariants and preconditions greatly
     # # increases the running time of the functions/methods.
-    import python_ta.contracts
-    python_ta.contracts.check_all_contracts()
 
     import doctest
 
     doctest.testmod(verbose=True)
-
-    import python_ta
-
-    python_ta.check_all(config={
-        'max-line-length': 120,
-        'disable': ['E1136', 'W0221'],
-        'extra-imports': ['csv', 'networkx', 'pandas'],
-        'max-nested-blocks': 4,
-    })
+    #
+    # import python_ta
+    #
+    # python_ta.check_all(config={
+    #     'max-line-length': 120,
+    #     'disable': ['E1136', 'W0221'],
+    #     'extra-imports': ['csv', 'networkx', 'pandas'],
+    #     'max-nested-blocks': 4,
+    # })
