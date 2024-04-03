@@ -1,10 +1,14 @@
 import tkinter as tk
+from graph import WeightedGraph
+from graph import load_weighted_review_graph
+from meal_picker import MealPicker
 
 
 class WelcomePage(tk.Frame):
     """
     Welcome page for the application.
     """
+
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
@@ -20,12 +24,28 @@ class WelcomePage(tk.Frame):
                                          height=2)
         self.continue_button.grid(row=1, column=0)
         self.select_weightings()
+        self.selected_item = None
 
     def on_continue(self):
         """
         Actions when 'Continue' is clicked
         """
-        print("Continue button clicked")
+
+        self.selected_item = self.parent.meal_picker.return_similar_meals()
+        print(self.selected_item)
+        _, food_name, _, _ = self.selected_item.split(" - ")
+        self.selected_item = food_name
+        print(food_name)
+
+
+
+        # main_graph = load_weighted_review_graph(food_file="database.csv",
+        #                                         categories={'protein': 1, 'total_carb': 1, 'total_fat': 1,
+        #                                                     'calories': 1, 'sugar': 1},
+        #                                         weights={})
+
+        # MealPicker.return_similar_meals()
+        # main_graph.get_similarity_score()
 
     def select_weightings(self):
         """
