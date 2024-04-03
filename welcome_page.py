@@ -1,6 +1,6 @@
 import tkinter as tk
 from graph import WeightedGraph
-from graph import load_weighted_review_graph
+from graph import load_graph
 from meal_picker import MealPicker
 
 
@@ -33,21 +33,21 @@ class WelcomePage(tk.Frame):
 
         self.selected_item = self.parent.meal_picker.return_similar_meals()
         print(self.selected_item)
-        _, food_name, _, _ = self.selected_item.split(" - ")
+        _, food_name, _, _ = self.selected_item.split(" | ")
         self.selected_item = food_name
         print(food_name)
 
         categories_increments = {'Calories': 100, 'Protein (g)': 10, 'Carbs (g)': 10, 'Sugars (g)': 5,
                                  'Total Fat (g)': 5, 'Sodium (mg)': 50}
-        weights = {'Calories': 8, 'Protein (g)': 6, 'Carbs (g)': 5, 'Sugars (g)': 10, 'Total Fat (g)': 5,
-                   'Sodium (mg)': 8}
-        output = load_weighted_review_graph('data.csv', categories_increments, weights)
+        output = load_graph('data.csv', categories_increments)
         main_graph, nutritional_info = output
-        main_graph.get_all_vertices("food")
-        main_graph.get_all_vertices("dessert")
-        main_graph.get_all_vertices("drink")
+        print(set(main_graph.vertices.keys()))
+        print(main_graph.get_all_vertices("food"))
+        print(main_graph.get_all_vertices("dessert"))
+        print(main_graph.get_all_vertices("drink"))
+        selected_food = main_graph.vertices[food_name]
 
-        # main_graph.get_similarity_score()
+        print(main_graph.recommend_meal(selected_food))
 
     def select_weightings(self):
         """

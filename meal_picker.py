@@ -90,7 +90,7 @@ class MealPicker(tk.Frame):
         self.results_listbox.delete(0, tk.END)
         for meal in matches:
             self.results_listbox.insert(tk.END,
-                                        f"Restaurant: {meal['restaurant']} - {meal['item']} - Calories: {meal['calories']} - Protein: {meal['protein']}")
+                                        f"Restaurant: {meal['restaurant']} | {meal['item']} | Calories: {meal['calories']} | Protein: {meal['protein']}")
 
     def return_similar_meals(self):
         """
