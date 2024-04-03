@@ -30,23 +30,32 @@ class SidePanel(tk.Frame):
         self.slider_entries = {}
 
         nutrients = {'protein': 300, 'total_carb': 500, 'total_fat': 300, 'calories': 5000, 'sugar': 300}
+
+        rownum = 0
+        colnum = 0
         for nutrient in nutrients:
             frame = tk.Frame(self)
-            frame.grid(row=0, column=0)
-            frame.pack(padx=10, pady=10, fill='x')
+            if rownum == 0:
+                frame.grid(row=rownum, column=colnum, padx=10, pady=(50, 0))
+            frame.grid(row=rownum, column=colnum, padx=10)
+            rownum, colnum = rownum + 1, colnum
 
-            label = tk.Label(frame, text=f"{nutrient}:")
-            label.pack(side='left')
+            nutrient_label = (nutrient.replace("_", " ")).upper()
+            label = tk.Label(frame, text=f"{nutrient_label}", font=("Roboto", "16", "bold"), width=15, justify="center")
+            label.grid(row=rownum, column=colnum)
+            rownum, colnum = rownum + 1, colnum
 
-            entry = tk.Entry(frame, width=5)
-            entry.pack(side='left', padx=(0, 5))
+            entry = tk.Entry(frame, width=9)
+            entry.grid(row=rownum, column=colnum)
             entry.bind('<Return>', lambda event, nt=nutrient: self.on_entry_update(nt))
 
             slider = tk.Scale(frame, from_=0, to=nutrients[nutrient], orient='horizontal',
                               command=lambda value, nt=nutrient: self.update_entry_from_slider(nt))
 
-            slider.pack(side='left', fill='x', expand=True)
+            slider.grid(row=rownum - 1, column=colnum + 1, padx=50, pady=20)
             slider.bind('<B1-Motion>', lambda event, nt=nutrient: self.update_entry_from_slider(nt))
+            rownum, colnum = rownum + 1, colnum
+
             self.sliders[nutrient] = slider
             self.slider_entries[nutrient] = entry
 
