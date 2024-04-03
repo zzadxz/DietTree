@@ -37,14 +37,16 @@ class WelcomePage(tk.Frame):
         self.selected_item = food_name
         print(food_name)
 
+        categories_increments = {'Calories': 100, 'Protein (g)': 10, 'Carbs (g)': 10, 'Sugars (g)': 5,
+                                 'Total Fat (g)': 5, 'Sodium (mg)': 50}
+        weights = {'Calories': 8, 'Protein (g)': 6, 'Carbs (g)': 5, 'Sugars (g)': 10, 'Total Fat (g)': 5,
+                   'Sodium (mg)': 8}
+        output = load_weighted_review_graph('data.csv', categories_increments, weights)
+        main_graph, nutritional_info = output
+        main_graph.get_all_vertices("food")
+        main_graph.get_all_vertices("dessert")
+        main_graph.get_all_vertices("drink")
 
-
-        # main_graph = load_weighted_review_graph(food_file="database.csv",
-        #                                         categories={'protein': 1, 'total_carb': 1, 'total_fat': 1,
-        #                                                     'calories': 1, 'sugar': 1},
-        #                                         weights={})
-
-        # MealPicker.return_similar_meals()
         # main_graph.get_similarity_score()
 
     def select_weightings(self):
