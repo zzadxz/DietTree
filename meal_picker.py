@@ -21,10 +21,6 @@ class MealPicker(tk.Frame):
         Create widgets for the meal picker.
         """
 
-        bg = tk.PhotoImage(file="fancy_tree.png")
-        canvas1 = tk.Label(self, image=bg)
-        canvas1.place(x=0, y=0, relwidth=1, relheight=1)
-
         self.meal_label = tk.Label(self, text="Enter meal name:")
         self.meal_label.pack(padx=10, pady=(10, 0))
 
