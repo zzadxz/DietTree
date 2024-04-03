@@ -25,9 +25,10 @@ class MainApplication(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title('Main Application')
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
+
+        self.title('Main Application')
         self.geometry(f'{screen_width}x{screen_height}')
 
         self.welcome_page = WelcomePage(self)

@@ -1,6 +1,7 @@
 import tkinter as tk
 from graph import WeightedGraph
 
+
 class MealPicker(tk.Frame):
     """
     Meal picker for the application.
@@ -8,15 +9,22 @@ class MealPicker(tk.Frame):
 
     def __init__(self, parent, database, side_panel, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+        self.parent = parent
         self.database = database
         self.side_panel = side_panel
         self.create_widgets()
         self.pack(fill='both', expand=True)
+        self.selected = None
 
     def create_widgets(self):
         """
         Create widgets for the meal picker.
         """
+
+        bg = tk.PhotoImage(file="fancy_tree.png")
+        canvas1 = tk.Label(self, image=bg)
+        canvas1.place(x=0, y=0, relwidth=1, relheight=1)
+
         self.meal_label = tk.Label(self, text="Enter meal name:")
         self.meal_label.pack(padx=10, pady=(10, 0))
 
@@ -85,7 +93,14 @@ class MealPicker(tk.Frame):
                                         f"Restaurant: {meal['restaurant']} - {meal['item']} - Calories: {meal['calories']} - Protein: {meal['protein']}")
 
     def return_similar_meals(self):
-        ...
+        """
+        TODO
+        """
+        try:
+            return self.results_listbox.get(self.results_listbox.curselection())
+        except AttributeError:
+            return None
+
 
 if __name__ == '__main__':
     # You can uncomment the following lines for code checking/debugging purposes.
