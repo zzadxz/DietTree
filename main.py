@@ -31,6 +31,10 @@ class MainApplication(tk.Tk):
         self.title('Main Application')
         self.geometry(f'{screen_width}x{screen_height}')
 
+        # self.background_image = tk.PhotoImage(file='fancy_tree.png')
+        # self.background_label = tk.Label(self, image=self.background_image)
+        # self.background_label.place(relx=0, rely=0, relwidth=1, relheight=1)
+
         self.welcome_page = WelcomePage(self)
         self.welcome_page.pack(side='right', fill='both', expand=True)
 
