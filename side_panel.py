@@ -4,7 +4,8 @@ It is a standard Python interface to the Tk GUI toolkit.
 """
 
 import tkinter as tk
-from typing import Optional
+from tkinter import Entry, Label
+from typing import Dict, Optional, Tuple
 
 
 class SidePanel(tk.Frame):
