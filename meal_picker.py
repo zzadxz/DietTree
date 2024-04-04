@@ -11,8 +11,20 @@ class MealPicker(tk.Frame):
         - database: The database containing meal data.
         - side_panel: The side panel object for nutritional preferences.
         - selected: The currently selected item.
+        - not_searching: A boolean indicating if the user is not searching.
+        - meal_label: A label for the meal entry.
+        - meal_entry: An entry for the meal name.
+        - search_button: A button for searching meals.
+        - results_listbox: A listbox for displaying search results.
+
     Representation Invariants:
-        - TODO
+        - self.meal_label is a tk.Label widget.
+        - self.meal_entry is a tk.Entry widget.
+        - self.search_button is a tk.Button widget.
+        - self.results_listbox is a tk.Listbox widget.
+        - self.selected is either None or a string.
+        - self.not_searching is a boolean.
+        - self.database is a list of dictionaries.
     """
     parent: tk.Widget
     database: Any
@@ -36,6 +48,15 @@ class MealPicker(tk.Frame):
 
     def create_widgets(self) -> None:
         """Create widgets for the meal picker.
+
+        The widgets include:
+            - A label for the meal entry.
+            - An entry for the meal name.
+            - A button for searching meals.
+            - A listbox for displaying search results.
+            - A scrollbar for the listbox.
+            - A button for returning similar meals.
+            - Highlights the selected meal.
         """
         self.meal_label = tk.Label(self, text="Enter meal name:")
         self.meal_label.pack(padx=10, pady=(10, 0))
@@ -55,7 +76,9 @@ class MealPicker(tk.Frame):
         self.results_listbox.config(yscrollcommand=scrollbar.set)
 
     def parse_value(self, value: str) -> float:
-        """Parse a string value into a float."""
+        """
+        Parse a string value into a float. If the value is 'NA' or an empty string, return 0.
+        """
         if value.strip() == 'NA' or not value.strip():
             return 0
         elif value.startswith('<'):
@@ -67,7 +90,9 @@ class MealPicker(tk.Frame):
                 return 0
 
     def meal_fits_criteria(self, meal: dict, nutrient_ranges: dict, slider_values: dict) -> bool:
-        """Determines if a meal fits within the specified nutrient ranges based on slider values."""
+        """
+        Determines if a meal fits within the specified nutrient ranges based on slider values. If a slider value is 0, it is ignored. If a meal does not fit within the specified ranges, return False. Otherwise, return True.
+        """
         for nutrient, get_range in nutrient_ranges.items():
             slider_value = slider_values.get(nutrient)
             if slider_value is None or slider_value == 0:
@@ -79,7 +104,10 @@ class MealPicker(tk.Frame):
         return True
 
     def search_meals(self) -> None:
-        """Filter through a database of meals based on nutritional preferences."""
+        """
+        Filter through a database of meals based on nutritional preferences.
+        The search is based on the meal name and the nutritional preferences set by the user. If a meal fits the criteria, it is displayed in the results listbox.
+        """
         if self.not_searching:
             self.search_button.config(text="Search")
 
@@ -97,7 +125,7 @@ class MealPicker(tk.Frame):
             self.results_listbox.insert(tk.END, self.format_meal_description(meal))
 
     def define_nutrient_ranges(self) -> dict:
-        """Defines the nutrient ranges for filtering meals."""
+        """Defines the nutrient ranges for filtering meals using the lambda functions."""
         return {
             'Calories': lambda v: (v - 100, v + 100),
             'Protein (g)': lambda v: (v - 5, v + 5),
@@ -124,18 +152,10 @@ class MealPicker(tk.Frame):
 
 
 if __name__ == '__main__':
-    # You can uncomment the following lines for code checking/debugging purposes.
-    # However, we recommend commenting out these lines when working with the large
-    # datasets, as checking representation invariants and preconditions greatly
-    # # increases the running time of the functions/methods.
     import python_ta.contracts
-
     python_ta.contracts.check_all_contracts()
-
     import doctest
-
     doctest.testmod(verbose=True)
-
     import python_ta
 
     python_ta.check_all(config={
