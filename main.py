@@ -28,7 +28,7 @@ class MainApplication(tk.Tk):
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
         database = load_meal_data('data.csv')
-        self.title('Main Application')
+        self.title('DietTree Project')
         self.geometry(f'{screen_width}x{screen_height}')
 
         # self.background_image = tk.PhotoImage(file='fancy_tree.png')
