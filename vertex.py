@@ -79,7 +79,8 @@ class WeightedVertex(Vertex):
         self.neighbours = {}
 
     def vertex_similarity_score(self, other: WeightedVertex, weightings: dict[str, float]) -> float:
-        """Returns the similarity score between two food vertices.
+        """
+        Returns the similarity score between two food vertices.
 
         Representation Invariants:
             - self.kind in {'food', 'dessert', 'drink'}
