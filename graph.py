@@ -9,8 +9,7 @@ from vertex import WeightedVertex
 
 
 class Graph:
-    """
-    A graph used to represent a book review network.
+    """A graph used to represent a book review network.
     Private Instance Attributes:
         - vertices:
             A collection of the vertices contained in this graph.
@@ -305,7 +304,7 @@ if __name__ == '__main__':
     # You can uncomment the following lines for code checking/debugging purposes.
     # However, we recommend commenting out these lines when working with the large
     # datasets, as checking representation invariants and preconditions greatly
-    # # increases the running time of the functions/methods.
+    # increases the running time of the functions/methods.
 
     import doctest
 
