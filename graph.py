@@ -256,8 +256,6 @@ def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict
     item_name = row['Item']  # This comes from the filtered/preprocessed DataFrame
 
     item_category = row['Category'].lower()
-    print(item_name)
-    print(item_category)
 
     # Pass item_data when adding a vertex
     if item_name not in graph.get_all_vertices():
@@ -274,7 +272,6 @@ def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict
 
 
 def load_graph(food_file: str, categories: dict[str, int]) -> (WeightedGraph, dict[Any, Any]):
-
     """Return a book review WEIGHTED graph corresponding to the given datasets.
 
     This should be very similar to the corresponding function from Exercise 3, except now
@@ -315,11 +312,11 @@ if __name__ == '__main__':
 
     doctest.testmod(verbose=True)
     #
-    # import python_ta
-    #
-    # python_ta.check_all(config={
-    #     'max-line-length': 120,
-    #     'disable': ['E1136', 'W0221'],
-    #     'extra-imports': ['csv', 'networkx', 'pandas'],
-    #     'max-nested-blocks': 4,
-    # })
+    import python_ta
+
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'disable': ['E1136', 'W0221'],
+        'extra-imports': ['csv', 'networkx', 'pandas'],
+        'max-nested-blocks': 4,
+    })
