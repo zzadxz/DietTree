@@ -31,7 +31,8 @@ class SidePanel(tk.Frame):
         self.slider_labels = {}
         self.slider_entries = {}
 
-        self.nutrients = {'Protein (g)': 300, 'Carbs (g)': 500, 'Total Fat (g)': 300, 'Calories': 5000, 'Sugars (g)': 300}
+        self.nutrients = {'Protein (g)': 300, 'Carbs (g)': 500, 'Total Fat (g)': 300, 'Calories': 5000,
+                          'Sugars (g)': 300}
 
         rownum = 0
         colnum = 0
@@ -64,6 +65,9 @@ class SidePanel(tk.Frame):
             self.sliders[nutrient] = slider
             self.slider_labels[nutrient] = label
             self.slider_entries[nutrient] = entry
+
+            self.reset_button = tk.Button(self, text="Reset Sliders", command=self.reset_sliders, width=10, height=2)
+            self.reset_button.grid(row=len(self.nutrients) + 15, column=0, pady=40, padx=10, columnspan=2)
 
     def get_slider_values(self) -> dict:
         """
@@ -114,6 +118,14 @@ class SidePanel(tk.Frame):
         entry = self.slider_entries[nutrient]
         entry.delete(0, tk.END)
         entry.insert(0, str(value))
+
+    def reset_sliders(self):
+        """Reset all sliders to their minimum value."""
+        for slider in self.sliders.values():
+            slider.set(0)
+        for entry in self.slider_entries.values():
+            entry.delete(0, tk.END)
+            entry.insert(0, str(0))
 
 
 if __name__ == '__main__':
