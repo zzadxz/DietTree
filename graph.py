@@ -16,11 +16,11 @@ class Graph:
     #     - vertices:
     #         A collection of the vertices contained in this graph.
     #         Maps item to vertex object.
-    vertices: dict[Any, Vertex]
+    _vertices: dict[Any, Vertex]
 
     def __init__(self) -> None:
         """Initialize an empty graph (no vertices or edges)."""
-        self.vertices = {}
+        self._vertices = {}
 
     def add_vertex(self, item: Any, kind: str) -> None:
         """Add a vertex with the given item and kind to this graph.
@@ -31,8 +31,8 @@ class Graph:
         Preconditions:
             - kind in {'food', 'dessert', 'drink', 'category'}
         """
-        if item not in self.vertices:
-            self.vertices[item] = Vertex(item, kind)
+        if item not in self._vertices:
+            self._vertices[item] = Vertex(item, kind)
 
     def add_edge(self, item1: Any, item2: Any) -> None:
         """Add an edge between the two vertices with the given items in this graph.
@@ -42,9 +42,9 @@ class Graph:
         Preconditions:
             - item1 != item2
         """
-        if item1 in self.vertices and item2 in self.vertices:
-            v1 = self.vertices[item1]
-            v2 = self.vertices[item2]
+        if item1 in self._vertices and item2 in self._vertices:
+            v1 = self._vertices[item1]
+            v2 = self._vertices[item2]
 
             v1.neighbours.add(v2)
             v2.neighbours.add(v1)
@@ -56,8 +56,8 @@ class Graph:
 
         Return False if item1 or item2 do not appear as vertices in this graph.
         """
-        if item1 in self.vertices and item2 in self.vertices:
-            v1 = self.vertices[item1]
+        if item1 in self._vertices and item2 in self._vertices:
+            v1 = self._vertices[item1]
             return any(v2.item == item2 for v2 in v1.neighbours)
         else:
             return False
@@ -69,8 +69,8 @@ class Graph:
 
         Raise a ValueError if item does not appear as a vertex in this graph.
         """
-        if item in self.vertices:
-            v = self.vertices[item]
+        if item in self._vertices:
+            v = self._vertices[item]
             return {neighbour.item for neighbour in v.neighbours}
         else:
             raise ValueError
@@ -84,9 +84,9 @@ class Graph:
             - kind in {'food', 'dessert', 'drink', 'category'}
         """
         if kind != '':
-            return {v.item for v in self.vertices.values() if v.kind == kind}
+            return {v.item for v in self._vertices.values() if v.kind == kind}
         else:
-            return set(self.vertices.keys())
+            return set(self._vertices.keys())
 
 
 class WeightedGraph(Graph):
@@ -170,6 +170,19 @@ class WeightedGraph(Graph):
 
         return mainv.vertex_similarity_score(samplev, weighting)
 
+    def get_all_vertices(self, kind: str = '') -> set:
+        """Return a set of all vertex items in this graph.
+
+        If kind != '', only return the items of the given vertex kind.
+
+        Preconditions:
+            - kind in {'food', 'dessert', 'drink', 'category'}
+        """
+        if kind != '':
+            return {v.item for v in self._vertices.values() if v.kind == kind}
+        else:
+            return set(self._vertices.keys())
+
     def recommend_meal(self, food: str, limit: int, weighting: dict[str, float]) -> list[str]:
         """Return a list of up to <limit> recommended books based on similarity to the given book.
 
@@ -241,6 +254,7 @@ def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict
     """Adds all the required edges between vertices initialized from each row in our csv"""
 
     item_name = row['Item']  # This comes from the filtered/preprocessed DataFrame
+
     item_category = row['Category'].lower()
 
     # Pass item_data when adding a vertex
@@ -257,8 +271,7 @@ def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict
             graph.add_edge(item_name, category_vertex)
 
 
-def load_graph(food_file: str, categories: dict[str, int]) -> (Graph, dict[Any, Any]):
-
+def load_graph(food_file: str, categories: dict[str, int]) -> (WeightedGraph, dict[Any, Any]):
     """Return a book review WEIGHTED graph corresponding to the given datasets.
 
     This should be very similar to the corresponding function from Exercise 3, except now
@@ -299,11 +312,11 @@ if __name__ == '__main__':
 
     doctest.testmod(verbose=True)
     #
-    # import python_ta
-    #
-    # python_ta.check_all(config={
-    #     'max-line-length': 120,
-    #     'disable': ['E1136', 'W0221'],
-    #     'extra-imports': ['csv', 'networkx', 'pandas'],
-    #     'max-nested-blocks': 4,
-    # })
+    import python_ta
+
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'disable': ['E1136', 'W0221'],
+        'extra-imports': ['csv', 'networkx', 'pandas'],
+        'max-nested-blocks': 4,
+    })
