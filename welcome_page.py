@@ -1,7 +1,7 @@
 import tkinter as tk
 from typing import Any, Dict
 
-from graph import WeightedGraph
+from graph import WeightedGraph, load_graph
 # from graph import load_graph
 from meal_picker import MealPicker
 from side_panel import SidePanel
@@ -31,41 +31,49 @@ class WelcomePage(tk.Frame):
         self.select_weightings()
         self.selected_item = None
         self.first_click = True
+        self.main_graph = None
+        self.nutritional_info = None
 
     def on_continue(self):
         """
         Actions when 'Continue' is clicked
         """
-        main_graph = None
-        nutritional_info = None
+
         if self.first_click:
             categories_increments = {'Calories': 100, 'Protein (g)': 10, 'Carbs (g)': 10, 'Sugars (g)': 5,
-                                     'Total Fat (g)': 5, 'Sodium (mg)': 50}
+                                     'Total Fat (g)': 5}
             output = load_graph('data.csv', categories_increments)
-            main_graph, nutritional_info = output
-            print(nutritional_info)
+            self.main_graph, self.nutritional_info = output
+            # print(self.nutritional_info)
             self.first_click = False
 
-        assert main_graph is not None and nutritional_info is not None
+            # self.parent.meal_picker.results_listbox.delete(0, tk.END)
+            # for meal in matches:
+            #     self.results_listbox.insert(tk.END,
+            #                                 f"Company: {meal['Company']} | Item: {meal['Item']} | Calories: {meal['Calories']} | Protein: {meal['Protein (g)']}")
+
+        assert self.main_graph is not None and self.nutritional_info is not None
 
         self.selected_item = self.parent.meal_picker.return_similar_meals()
         _, food_name, _, _ = self.selected_item.split(" | ")
         print(self.selected_item)
-        self.selected_item = food_name
-        print(food_name)
+        _, self.selected_item = food_name.split(": ")
+        print(self.selected_item)
 
         slider_entries, _ = self.return_slider_entries()
         slider_entries = parse_tkinter_slider_entries(slider_entries)
-        print(slider_entries)  # WORKS!!!
+        # print(slider_entries)  # WORKS!!!
 
-        selected_food = main_graph.vertices[food_name]
-        recommended_meals = main_graph.recommend_meal(food=selected_food,
-                                                      limit=10,
-                                                      weighting=slider_entries)
-        print(recommended_meals)
-        food_messages = []
-        for food in recommended_meals:
-            food_messages.append(concatenate_meal_name(food, nutritional_info))
+        selected_food = self.main_graph.get_vertex(self.selected_item)
+        print(selected_food)
+        if selected_food is not None:
+            recommended_meals = self.main_graph.recommend_meal(food=self.selected_item,
+                                                               limit=10,
+                                                               weighting=slider_entries)
+            print(recommended_meals)
+            food_messages = []
+            for food in recommended_meals:
+                food_messages.append(concatenate_meal_name(food, self.nutritional_info))
 
         # print(set(main_graph.vertices.keys()))
         # print(main_graph.get_all_vertices("food"))
@@ -96,7 +104,7 @@ class WelcomePage(tk.Frame):
         self.slider_labels = {}
         self.slider_entries = {}
 
-        nutrients = {'protein', 'total_carb', 'total_fat', 'calories', 'sugar'}
+        nutrients = {'Protein (g)', 'Carbs (g)', 'Total Fat (g)', 'Calories', 'Sugars (g)'}
 
         rownum = 2
         colnum = 0
@@ -174,8 +182,9 @@ def concatenate_meal_name(food: WeightedVertex, nutritional_info: dict[str, dict
     """
     current_food = nutritional_info[food.item]
     company_name, meal_name, calories, protein = current_food['Company'], current_food['Item'], \
-        current_food['Calories'], current_food['Protein']
+        current_food['Calories'], current_food['Protein (g)']
 
+    print(f'{company_name} | {meal_name} | Calories: {calories} | Protein: {protein}')
     return f'{company_name} | {meal_name} | Calories: {calories} | Protein: {protein}'
 
 
