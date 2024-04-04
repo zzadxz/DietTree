@@ -81,7 +81,7 @@ class WeightedVertex(Vertex):
         This vertex is initialized with no neighbours.
 
         Preconditions:
-            - self.kind in {'calories', 'proten'} # TODO (add the rest)
+            - self.kind in {'calories', 'protein', 'carbs', 'fat', 'sugars'}
         """
         super().__init__(item, kind)
         self.neighbours = {}
@@ -125,17 +125,10 @@ class WeightedVertex(Vertex):
 
 
 if __name__ == '__main__':
-    # You can uncomment the following lines for code checking/debugging purposes.
-    # However, we recommend commenting out these lines when working with the large
-    # datasets, as checking representation invariants and preconditions greatly
-    # # increases the running time of the functions/methods.
     import python_ta.contracts
     python_ta.contracts.check_all_contracts()
-
     import doctest
-
     doctest.testmod(verbose=True)
-
     import python_ta
 
     python_ta.check_all(config={
