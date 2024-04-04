@@ -31,7 +31,7 @@ class SidePanel(tk.Frame):
         self.slider_labels = {}
         self.slider_entries = {}
 
-        self.nutrients = {'protein': 300, 'total_carb': 500, 'total_fat': 300, 'calories': 5000, 'sugar': 300}
+        self.nutrients = {'Protein (g)': 300, 'Carbs (g)': 500, 'Total Fat (g)': 300, 'Calories': 5000, 'Sugars (g)': 300}
 
         rownum = 0
         colnum = 0
@@ -74,11 +74,11 @@ class SidePanel(tk.Frame):
             entry_value = self.slider_entries[nutrient].get().strip()
             if entry_value:
                 try:
-                    values[nutrient.lower()] = int(entry_value)
+                    values[nutrient] = int(entry_value)
                 except ValueError:
-                    values[nutrient.lower()] = slider.get()
+                    values[nutrient] = slider.get()
             else:
-                values[nutrient.lower()] = slider.get()
+                values[nutrient] = slider.get()
         return values
 
     def update_slider_value(self, nutrient: str, value: int) -> None:

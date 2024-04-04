@@ -30,7 +30,7 @@ class MealPicker(tk.Frame):
         self.search_button = tk.Button(self, text="Search", command=self.search_meals)
         self.search_button.pack(pady=(0, 20))
 
-        self.results_listbox = tk.Listbox(self)
+        self.results_listbox = tk.Listbox(self, width=100)
         self.results_listbox.pack(side='left', fill='both', expand=True)
 
         scrollbar = tk.Scrollbar(self, orient='vertical', command=self.results_listbox.yview)
@@ -51,15 +51,6 @@ class MealPicker(tk.Frame):
             'Sugars (g)': (lambda v: (v - 5, v + 5)),
             'Total Fat (g)': (lambda v: (v - 10, v + 10)),
         }
-        # (abs.(500/700) * 10) + (abs.(10/5) * 5)  = 10
-        # add_edge(big_mac, whopper, 10)
-
-        # calories1 = 200_300
-        # calories2 = 300_400
-        # sugar1 = 5-10
-        # ...
-        # food1 = big_mac
-        # f2 = whopper
         matches = []
         target_meals = ['calories', 'protein', 'total_carb', 'sugar', 'total_fat']
         adjusted_meal = {
@@ -70,11 +61,21 @@ class MealPicker(tk.Frame):
             'total_fat': 'Total Fat (g)'
         }
 
+        def parse_value(value):
+            if value.strip() == 'NA' or not value.strip():
+                return 0
+            elif value.startswith('<'):
+                return 0.5
+            else:
+                try:
+                    return float(value)
+                except ValueError:
+                    return 0
+
         matches = []
         for meal in self.database:
             adjusted_meal = {
-                k: float(v) if v.strip() and v != 'NA' and not v.startswith('<') else 0.5 if v.startswith('<') else 0
-                for k, v in meal.items() if k in nutrient_ranges
+                k: parse_value(v) for k, v in meal.items() if k in nutrient_ranges
             }
             if meal_name.lower() in meal['Item'].lower():
                 within_range = True
