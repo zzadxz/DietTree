@@ -16,6 +16,7 @@ class SidePanel(tk.Frame):
     sliders: dict[str, tk.Scale]
     slider_labels: dict[str, tk.Label]
     slider_entries: dict[str, tk.Entry]
+    nutrients: dict[str, int]
 
     def __init__(self, parent: Optional[tk.Frame], *args, **kwargs) -> None:
         super().__init__(parent, *args, **kwargs)
@@ -30,11 +31,11 @@ class SidePanel(tk.Frame):
         self.slider_labels = {}
         self.slider_entries = {}
 
-        nutrients = {'protein': 300, 'total_carb': 500, 'total_fat': 300, 'calories': 5000, 'sugar': 300}
+        self.nutrients = {'protein': 300, 'total_carb': 500, 'total_fat': 300, 'calories': 5000, 'sugar': 300}
 
         rownum = 0
         colnum = 0
-        for nutrient in nutrients:
+        for nutrient in self.nutrients:
             frame = tk.Frame(self)
             if rownum == 0:
                 frame.grid(row=rownum, column=colnum, padx=10, pady=(50, 0))
@@ -50,7 +51,7 @@ class SidePanel(tk.Frame):
             entry.grid(row=rownum, column=colnum)
             entry.bind('<Return>', lambda event, nt=nutrient: self.on_entry_update(nt))
 
-            slider = tk.Scale(frame, from_=0, to=nutrients[nutrient], orient='horizontal',
+            slider = tk.Scale(frame, from_=0, to=self.nutrients[nutrient], orient='horizontal',
                               command=lambda value, nt=nutrient: self.update_entry_from_slider(nt))
 
             slider.grid(row=rownum - 1, column=colnum + 1, padx=50, pady=20)
@@ -98,6 +99,9 @@ class SidePanel(tk.Frame):
         try:
             value = int(self.slider_entries[nutrient].get())
             self.sliders[nutrient].set(value)
+            # Checks if value is in range
+            if not (0 <= value <= self.nutrients[nutrient]):
+                raise ValueError
         except ValueError:
             self.slider_entries[nutrient].delete(0, tk.END)
             self.slider_entries[nutrient].insert(0, str(self.sliders[nutrient].get()))
