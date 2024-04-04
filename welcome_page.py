@@ -39,23 +39,20 @@ class WelcomePage(tk.Frame):
         self.first_click = True
         self.main_graph = None
         self.nutritional_info = None
+        self.in_click = False
 
     def on_continue(self):
         """Actions when 'Continue' is clicked
         """
+        if not self.in_click:
+            self.in_click = True
 
         if self.first_click:
             categories_increments = {'Calories': 100, 'Protein (g)': 10, 'Carbs (g)': 10, 'Sugars (g)': 5,
                                      'Total Fat (g)': 5}
             output = load_graph('data.csv', categories_increments)
             self.main_graph, self.nutritional_info = output
-            # print(self.nutritional_info)
             self.first_click = False
-
-            # self.parent.meal_picker.results_listbox.delete(0, tk.END)
-            # for meal in matches:
-            #     self.results_listbox.insert(tk.END,
-            #                                 f"Company: {meal['Company']} | Item: {meal['Item']} | Calories: {meal['Calories']} | Protein: {meal['Protein (g)']}")
 
         assert self.main_graph is not None and self.nutritional_info is not None
 
@@ -67,23 +64,23 @@ class WelcomePage(tk.Frame):
 
         slider_entries, _ = self.return_slider_entries()
         slider_entries = parse_tkinter_slider_entries(slider_entries)
-        # print(slider_entries)  # WORKS!!!
 
         selected_food = self.main_graph.get_vertex(self.selected_item)
         print(selected_food)
+
+        food_messages = []
         if selected_food is not None:
             recommended_meals = self.main_graph.recommend_meal(food=self.selected_item,
                                                                limit=10,
                                                                weighting=slider_entries)
             print(recommended_meals)
-            food_messages = []
             for food in recommended_meals:
                 food_messages.append(concatenate_meal_name(food, self.nutritional_info))
 
-        # print(set(main_graph.vertices.keys()))
-        # print(main_graph.get_all_vertices("food"))
-        # print(main_graph.get_all_vertices("dessert"))
-        # print(main_graph.get_all_vertices("drink"))
+        if self.in_click:
+            self.parent.meal_picker.results_listbox.delete(0, tk.END)
+            for meal_name in food_messages:
+                self.parent.meal_picker.results_listbox.insert(tk.END, meal_name)
 
     def on_help(self):
         """Actions when 'Help' is pressed on the display console.
