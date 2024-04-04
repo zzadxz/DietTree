@@ -129,11 +129,10 @@ class WeightedGraph(Graph):
             v1 = self._vertices[item1]
             v2 = self._vertices[item2]
 
-            # Add the new edge
             v1.neighbours[v2] = weight
             v2.neighbours[v1] = weight
         else:
-            # We didn't find an existing vertex for both items.
+            # This is for when we didn't find an existing vertex for both items.
             raise ValueError
 
     def get_weight(self, item1: Any, item2: Any) -> Union[int, float]:
@@ -192,33 +191,19 @@ class WeightedGraph(Graph):
             return set(self._vertices.keys())
 
     def recommend_meal(self, food: str, limit: int, weighting: dict[str, float]) -> list[WeightedVertex]:
-        """Return a list of up to <limit> recommended books based on similarity to the given book.
-
-        score_type is one of 'unweighted' or 'strict', corresponding to the
-        different ways of calculating weighted graph vertex similarity, as described
-        on the assignment handout. The corresponding similarity score formula is used
-        in this method (whenever the phrase "similarity score" appears below).
-
-        The return value is a list of the titles of recommended books, sorted in
-        *descending order* of similarity score. Ties are broken in descending order
-        of book title. That is, if v1 and v2 have the same similarity score, then
-        v1 comes before v2 if and only if v1.item > v2.item.
-
-        The returned list should NOT contain:
-            - the input book itself
-            - any food items with a similarity score of 0 to the input book
-            - any duplicates
-            - any vertices that represents a user (instead of a book)
-
-        Up to <limit> books are returned, starting with the book with the highest similarity score,
-        then the second-highest similarity score, etc. Fewer than <limit> books are returned if
-        and only if there aren't enough books that meet the above criteria.
+        """
+        Return a list of recommended meals based on the given food item, limit, and weighting.
+        Given the limit, the number of recommendations to return, and the weighting.
 
         Preconditions:
             - food in self._vertices
-            - self._vertices[food].kind in {'food', 'dessert', 'drink'}
-            - limit >= 1
-            - score_type in {'unweighted', 'strict'}
+            - limit > 0
+            - weighting is a dictionary of the form {'calories': 1, 'fat': 1, 'carbs': 1, 'protein': 1}
+
+        Representation Invariants:
+            - food in self._vertices
+            - limit > 0
+            - all(value > 0 for value in weighting.values())
         """
 
         if food not in self._vertices or self._vertices[food].kind not in {'food', 'dessert', 'drink'}:
@@ -261,11 +246,10 @@ def preprocess_dataframe(df: pd.DataFrame, categories: dict[str, int]) -> pd.Dat
 def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict[str, int]) -> None:
     """Adds all the required edges between vertices initialized from each row in our csv"""
 
-    item_name = row['Item']  # This comes from the filtered/preprocessed DataFrame
+    item_name = row['Item']
 
     item_category = row['Category'].lower()
 
-    # Pass item_data when adding a vertex
     if item_name not in graph.get_all_vertices():
         graph.add_vertex(item_name, item_category)
 
@@ -275,18 +259,32 @@ def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict
             category_vertex = f"{category}_{value}"
             if category_vertex not in graph.get_all_vertices():
                 graph.add_vertex(category_vertex, category)
-            # weight = weights.get(category, 1)  # Use default weight of 1 if not specified
             graph.add_edge(item_name, category_vertex)
 
 
 def load_graph(food_file: str, categories: dict[str, int]) -> (WeightedGraph, dict[Any, Any]):
-    """Return a book review WEIGHTED graph corresponding to the given datasets.
-
-    This should be very similar to the corresponding function from Exercise 3, except now
-    the book review scores are used as edge weights.
+    """
+    Load the graph from the given food file and categories.
 
     Preconditions:
-        - reviews_file is the path to a CSV file corresponding to the food datase
+        - food_file is a string representing a valid path to a CSV file.
+        - categories is a dictionary where keys are strings representing nutritional categories and values are integers
+          representing the increments for each category.
+
+    Postconditions:
+        - Returns a tuple where the first element is a WeightedGraph and the second element is a dictionary.
+        - The WeightedGraph contains vertices for each food item and nutritional category in the CSV file.
+        - The dictionary maps food items to their nutritional information.
+
+    Instance Attributes:
+        - food_file: a string representing a valid path to a CSV file.
+        - categories: a dictionary where keys are strings representing nutritional categories and values are integers
+          representing the increments for each category.
+
+    Representation Invariants:
+        - food_file is a string representing a valid path to a CSV file.
+        - categories is a dictionary where keys are strings representing nutritional categories and values are integers
+          representing the increments for each category.
     """
     graph = WeightedGraph()
     df = pd.read_csv(food_file)
@@ -311,10 +309,6 @@ def load_graph(food_file: str, categories: dict[str, int]) -> (WeightedGraph, di
 
 
 if __name__ == '__main__':
-    # You can uncomment the following lines for code checking/debugging purposes.
-    # However, we recommend commenting out these lines when working with the large
-    # datasets, as checking representation invariants and preconditions greatly
-    # increases the running time of the functions/methods.
 
     import doctest
 
