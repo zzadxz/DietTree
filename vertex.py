@@ -4,24 +4,28 @@ from __future__ import annotations
 from typing import Any, Union
 
 
-# TODO EVERYTHING
 class Vertex:
-    """A vertex in a book review graph, used to represent a user or a book.
+    """
+    Represents a vertex in a graph used in the context of modeling a network where vertices
+    can represent entities such as food items, drinks, desserts, or categories. This
+    class allows to make relationships (edges) to other vertices to indicate
+    connections between these entities based on predefined criteria (e.g., nutritional similarities, etc).
 
-    Each vertex item is either a user id or book title. Both are represented as strings,
-    even though we've kept the type annotation as Any to be consistent with lecture.
+    Attributes:
+        - item (Any): The data stored in this vertex (food item name, macros, etc).
+        - kind (str): A string indicating the type of entity this vertex represents. Expected values
+                      include 'food', 'dessert', 'drink', or 'category'.
+        - neighbours (set[Vertex]): A set of other Vertex instances that are directly connected to
+                      this vertex within the graph.
 
-    Instance Attributes:
-        - item: The data stored in this vertex, representing a user or book.
-        - kind: The type of this vertex: 'food', 'dessert', 'drink', or 'category'
-        - neighbours: The vertices that are adjacent to this vertex.
-        - TODO
+    Preconditions:
+        - item is unique within the graph.
+        - kind in {'food', 'dessert', 'drink', 'category'}.
+        - self not in self.neighbours.
 
     Representation Invariants:
         - self not in self.neighbours
         - all(self in u.neighbours for u in self.neighbours)
-        - self.kind in {'food', 'dessert', 'drink', 'category'}
-        - TODO
     """
     item: Any
     kind: str
@@ -39,28 +43,32 @@ class Vertex:
         self.kind = kind
         self.neighbours = set()
 
-    def degree(self) -> int:
-        """Return the degree of this vertex."""
-        return len(self.neighbours)
-
 
 class WeightedVertex(Vertex):
-    """A vertex in a weighted book review graph, used to represent a user or a book.
+    """
+    Extends the Vertex class to include weighted edges, which represent the strength or degree
+    of relationship between this vertex and its neighbours. In the context of a food application,
+    these weights can represent nutritional similarity or other criteria that determine how closely
+    related two food items or categories are.
 
-    Same documentation as Vertex from Exercise 3, except now neighbours is a dictionary mapping
-    a neighbour vertex to the weight of the edge to from self to that neighbour.
-    Note that for this exercise, the weights will be integers between 1 and 5.
+    Attributes:
+        - item (Any): The food item or category this vertex represents.
+        - kind (str): The type of entity this vertex represents, such as 'food', 'dessert', 'drink',
+                      or 'category'.
+        - neighbours (dict[WeightedVertex, Union[int, float]]): A dictionary where keys are
+                      instances of WeightedVertex representing the connected vertices, and values
+                      are the weights (int or float) indicating the strength of the relationship.
 
-    Instance Attributes:
-        - item: The data stored in this vertex, representing a user or book.
-        - kind: The type of this vertex: 'food', 'dessert', 'drink', or 'category'
-        - neighbours: The vertices that are adjacent to this vertex, and their corresponding
-            edge weights.
+    Preconditions:
+        - item is unique within the graph.
+        - kind in {'food', 'dessert', 'drink', 'category'}.
+        - self not in self.neighbours.keys().
+        - All weights are positive numbers.
 
     Representation Invariants:
         - self not in self.neighbours
+        - all(weight > 0 for weight in self.neighbours.values())
         - all(self in u.neighbours for u in self.neighbours)
-        - self.kind in {'food', 'dessert', 'drink', 'category'}
     """
     item: Any
     kind: str
@@ -80,11 +88,30 @@ class WeightedVertex(Vertex):
 
     def vertex_similarity_score(self, other: WeightedVertex, weightings: dict[str, float]) -> float:
         """
-        Returns the similarity score between two food vertices.
+        Calculates and returns the similarity score between this vertex and another weighted vertex,
+        based on their connected neighbours and the specified weighting criteria. This score can be
+        used to determine the closeness or compatibility between two food items or categories by taking
+        into account various nutritional or categorical aspects as defined by the weightings.
+
+        Parameters:
+            - other: Another instance of WeightedVertex to compare against this vertex.
+            - weightings: A dictionary where keys are the kinds of vertices (e.g., 'protein', 'carbs')
+                          and values are floats representing the importance or weight of that kind
+                          in calculating the similarity score.
+
+        Preconditions:
+            - self.kind in {'food', 'dessert', 'drink'} and other.kind in the same set.
+            - All values in weightings are positive numbers.
+            - self and other have at least one common neighbour kind specified in weightings.
+
+        Postconditions:
+            - The returned score is >= 0.
+            - The score reflects the weighted relationship based on common neighbours and the specified
+              weightings. A higher score indicates greater similarity.
 
         Representation Invariants:
-            - self.kind in {'food', 'dessert', 'drink'}
-            - other.kind in {'food', 'dessert', 'drink'}
+            - weightings.keys().issubset({'protein', 'carbs', 'fat', 'calories', 'sugars'})
+            - all(weight > 0 for weight in weightings.values())
         """
 
         if weightings is None:
@@ -96,35 +123,14 @@ class WeightedVertex(Vertex):
             similarity += 1 * weightings[v.kind]
         return similarity
 
-    #
-    # def get_similarity_score(self, other: WeightedVertex) -> float:
-    #     """Return the similarity score between this vertex and other.
-    #     """
-    #     similarity = 0.0
-    #     shared_neighbours = set(self.neighbours.keys()).intersection(set(other.neighbours.keys()))
-    #     for v in shared_neighbours:
-    #         if v.kind == 'calories':
-    #             similarity += 10  # TODO (switch to variables from the slider)
-    #         elif v.kind == 'protein':
-    #             similarity += 5
-    #         elif v.kind == 'sugar':
-    #             similarity += 4
-    #         elif v.kind == 'fat':
-    #             similarity += 3
-    #         elif v.kind in {'carb', 'fiber'}:
-    #             similarity += 2
-    #         else:
-    #             similarity += 1
-    #     return similarity
-
 
 if __name__ == '__main__':
     # You can uncomment the following lines for code checking/debugging purposes.
     # However, we recommend commenting out these lines when working with the large
     # datasets, as checking representation invariants and preconditions greatly
     # # increases the running time of the functions/methods.
-    # import python_ta.contracts
-    # python_ta.contracts.check_all_contracts()
+    import python_ta.contracts
+    python_ta.contracts.check_all_contracts()
 
     import doctest
 
