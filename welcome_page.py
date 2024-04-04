@@ -1,7 +1,11 @@
 import tkinter as tk
+from typing import Any, Dict
+
 from graph import WeightedGraph
 from graph import load_graph
 from meal_picker import MealPicker
+from side_panel import SidePanel
+from vertex import WeightedVertex
 
 
 class WelcomePage(tk.Frame):
@@ -25,29 +29,44 @@ class WelcomePage(tk.Frame):
         self.continue_button.grid(row=1, column=0)
         self.select_weightings()
         self.selected_item = None
+        self.first_click = True
 
     def on_continue(self):
         """
         Actions when 'Continue' is clicked
         """
 
+        main_graph = None
+        if self.first_click:
+            categories_increments = {'Calories': 100, 'Protein (g)': 10, 'Carbs (g)': 10, 'Sugars (g)': 5,
+                                     'Total Fat (g)': 5, 'Sodium (mg)': 50}
+            output = load_graph('data.csv', categories_increments)
+            main_graph, nutritional_info = output
+            print(nutritional_info)
+            self.first_click = False
+
+        assert main_graph is not None
+
         self.selected_item = self.parent.meal_picker.return_similar_meals()
-        print(self.selected_item)
         _, food_name, _, _ = self.selected_item.split(" | ")
+        print(self.selected_item)
         self.selected_item = food_name
         print(food_name)
 
-        categories_increments = {'Calories': 100, 'Protein (g)': 10, 'Carbs (g)': 10, 'Sugars (g)': 5,
-                                 'Total Fat (g)': 5, 'Sodium (mg)': 50}
-        output = load_graph('data.csv', categories_increments)
-        main_graph, nutritional_info = output
-        print(set(main_graph.vertices.keys()))
-        print(main_graph.get_all_vertices("food"))
-        print(main_graph.get_all_vertices("dessert"))
-        print(main_graph.get_all_vertices("drink"))
-        selected_food = main_graph.vertices[food_name]
+        slider_entries, _ = self.return_slider_entries()
+        slider_entries = parse_tkinter_slider_entries(slider_entries)
+        print(slider_entries)  # WORKS!!!
 
-        print(main_graph.recommend_meal(selected_food))
+        selected_food = main_graph.vertices[food_name]
+        recommended_meals = main_graph.recommend_meal(food=selected_food,
+                                                      limit=10,
+                                                      weighting=slider_entries)
+        print(recommended_meals)
+
+        # print(set(main_graph.vertices.keys()))
+        # print(main_graph.get_all_vertices("food"))
+        # print(main_graph.get_all_vertices("dessert"))
+        # print(main_graph.get_all_vertices("drink"))
 
     def select_weightings(self):
         """
@@ -115,3 +134,43 @@ class WelcomePage(tk.Frame):
         entry = self.slider_entries[nutrient]
         entry.delete(0, tk.END)
         entry.insert(0, str(value))
+
+    def return_slider_entries(self) -> tuple[dict[str, tk.Entry], dict[str, tk.Label]]:
+        """
+        Returns the entry that was entered for the weighting of nutrients.
+
+        Returns in the order: slider_entries, slider_labels
+        """
+        return self.slider_entries, self.slider_labels
+
+    def concatenate_meal_name(self, food: WeightedVertex, nutritional_info: dict[str, dict[str, Any]]) -> str:
+        """
+        Returns the restaurant, food, calories, protein in the order.
+        """
+        current_food = nutritional_info[food.item]
+        company_name, meal_name, calories, protein = current_food['Company'], current_food['Item'], \
+            current_food['Calories'], current_food['Protein']
+
+        return f'{company_name} | {meal_name} | Calories: {calories} | Protein: {protein}'
+
+
+
+
+def parse_tkinter_slider_entries(widget_entries) -> dict[str, int]:
+    """
+    Parses tkinter.Entry objects into regular integers.
+    """
+
+    widget_dict = {}
+
+    for key, entry_widget in widget_entries.items():
+        potential_weight = entry_widget.get()
+        if potential_weight == '':
+            widget_dict[key] = 1
+        else:
+            try:
+                widget_dict[key] = int(potential_weight)
+            except ValueError:
+                widget_dict[key] = 1  # Give a default weighting
+
+    return widget_dict
