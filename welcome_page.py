@@ -1,9 +1,10 @@
-import tkinter as tk
-from typing import Any
+"""YOUR DOCSTRING HERE"""
 
+import tkinter as tk
+from tkinter import messagebox
+from typing import Any, Optional
 from graph import load_graph
 from vertex import WeightedVertex
-from tkinter import messagebox
 
 
 class WelcomePage(tk.Frame):
@@ -17,7 +18,19 @@ class WelcomePage(tk.Frame):
     - first_click: True if it's the first click.
     """
 
-    def __init__(self, parent, *args, **kwargs):
+    parent: Any
+    welcome_label: tk.Label
+    continue_button: tk.Button
+    selected_item: Optional[Any] = None
+    first_click: bool = True
+    main_graph: Optional[Any] = None
+    nutritional_info: Optional[Any] = None
+    in_click: bool = False
+    sliders: dict[str, Any]
+    slider_labels: dict[str, Any]
+    slider_entries: dict[str, Any]
+
+    def __init__(self, parent: Any, *args, **kwargs) -> None:
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
 
@@ -84,25 +97,43 @@ class WelcomePage(tk.Frame):
                 self.parent.meal_picker.results_listbox.insert(tk.END, 'No available recommendations!')
             self.parent.meal_picker.search_button.config(text="Reset")
 
-    def on_help(self):
-        """Actions when 'Help' is pressed on the display console.
+    def on_help(self) -> None:
+        """
+        Actions when 'Help' is pressed on the display console.
         """
 
-        help_message = ("1. Find your base food item."
-                        "      a. Adjust sliders or type in the boxes on the left panel to set nutritional values, or\n"
-                        "      b. Directly search for a meal by typing in the text box above the search button. \n"
+        help_message = ("1. Find your base food item. \n"
+                        "   a. Adjust sliders or type in the boxes on the left panel to set nutritional values, or\n"
+                        "   b. Directly search for a meal by typing in the text box above the search button. \n"
+                        "\n"
                         "2. Press \"Search\" and select a meal with either similar nutritional values or a similar \n"
                         "   name as the one you specified. \n"
-                        "3. (Optional) Adjust sliders or type in the boxes on the right panel to set the weights for \n"
+                        "\n"
+                        "3. (Optional) Adjust sliders or type in the boxes on the right panel to set the weights for "
                         "   each nutritional value. The higher the number, the more importance that value will hold.\n"
+                        "\n"
                         "4. Press \"Find closest meal\" to get a list of meals that are similar! \n"
+                        "\n"
+                        "5. Adjust the \"NUM RECS slider\" to retreive a certain number of meal recommendations. \n"
+                        "\n"
+                        "6. The top of the returned list will be the meal that is the most similar to your selected "
+                        "meal. The similarity decreases as you go down the list. \n"
+                        "\n"
                         "\n"
                         "Reset Buttion: To reset values on the left panel to 0, press the \"Reset Sliders\" button.")
 
-        messagebox.showinfo("Help", help_message)
+        messagebox.showinfo("Help Me!", help_message)
 
-    def select_weightings(self):
-        """Set up sliders for the weightings panel on the right.
+    def select_weightings(self) -> None:
+        """
+        Displays the sliders required for the user to input the weightings for each of the nutrition categories in
+        their recomendations.
+
+        If the user does not touch/input response in weightings, the default will be a weighting of 1 for each
+        nutrient (that means each nutrient is weighted equally). The default number of recommendations is 5, unless
+        user changes it.
+
+        The help button displays a message on how to use the application when it is clicked.
         """
 
         self.sliders = {}
@@ -118,7 +149,7 @@ class WelcomePage(tk.Frame):
             if rownum == 0:
                 frame.grid(row=rownum, column=colnum, padx=10, pady=(50, 0))
             frame.grid(row=rownum, column=colnum, padx=10)
-            rownum, colnum = rownum + 1, colnum
+            rownum = rownum + 1
 
             nutrient_label = (nutrient.replace("_", " ")).upper()
             label = tk.Label(frame,
@@ -127,18 +158,18 @@ class WelcomePage(tk.Frame):
                              width=15,
                              justify="center")
             label.grid(row=rownum, column=colnum)
-            rownum, colnum = rownum + 1, colnum
+            rownum = rownum + 1
 
             entry = tk.Entry(frame, width=9)
             entry.grid(row=rownum, column=colnum)
-            entry.bind('<Return>', lambda event, nt=nutrient: self.on_entry_update(nt))
+            entry.bind('<Return>', lambda _, nt=nutrient: self.on_entry_update(nt))
 
             slider = tk.Scale(frame, from_=0, to=10, orient='horizontal',
-                              command=lambda value, nt=nutrient: self.update_entry_from_slider(nt))
+                              command=lambda _, nt=nutrient: self.update_entry_from_slider(nt))
 
             slider.grid(row=rownum - 1, column=colnum + 1, padx=50, pady=15)
-            slider.bind('<B1-Motion>', lambda event, nt=nutrient: self.update_entry_from_slider(nt))
-            rownum, colnum = rownum + 1, colnum
+            slider.bind('<B1-Motion>', lambda _, nt=nutrient: self.update_entry_from_slider(nt))
+            rownum = rownum + 1
 
             self.sliders[nutrient] = slider
             self.slider_entries[nutrient] = entry
@@ -150,7 +181,7 @@ class WelcomePage(tk.Frame):
                                  width=15,
                                  justify="center")
         num_rec_label.grid(row=rownum, column=colnum)
-        rownum, colnum = rownum + 1, colnum
+        rownum = rownum + 1
 
         num_rec_entry = tk.Entry(frame, width=9)
         num_rec_entry.grid(row=rownum, column=colnum)
@@ -162,12 +193,13 @@ class WelcomePage(tk.Frame):
         num_rec_slider.grid(row=rownum - 1, column=colnum + 1, padx=50, pady=15)
         num_rec_entry.bind('<B1-Motion>', lambda _, nt='NUMRECS': self.update_entry_from_slider(nt))
 
-        help_me = tk.Button(self, text="Click Me", command=self.on_help, height=2, width=10, activebackground='gray')
+        help_me = tk.Button(self, text="Help me!", command=self.on_help, height=2, width=10, activebackground='gray')
         help_me.grid(row=rownum, column=0, pady='30')
 
         self.sliders['NUM RECS'] = num_rec_slider
         self.slider_entries['NUM RECS'] = num_rec_entry
         self.slider_labels['NUM RECS'] = num_rec_label
+
 
     def on_entry_update(self, nutrient):
         """Update the slider position based on the manual entry value.
@@ -176,11 +208,12 @@ class WelcomePage(tk.Frame):
             value = int(self.slider_entries[nutrient].get())
             self.sliders[nutrient].set(value)
             # Checks if value is in range
-            if not (0 <= value <= 10):
+            if not 0 <= value <= 10:
                 raise ValueError
         except ValueError:
             self.slider_entries[nutrient].delete(0, tk.END)
             self.slider_entries[nutrient].insert(0, str(self.sliders[nutrient].get()))
+
 
     def update_entry_from_slider(self, nutrient):
         """Update the entry box value from the slider value.
@@ -209,6 +242,7 @@ def concatenate_meal_name(food: WeightedVertex, nutritional_info: dict[str, dict
     return f'{company_name} | {meal_name} | Calories: {calories} | Protein: {protein}'
 
 
+
 def parse_tkinter_slider_entries(widget_entries) -> dict[str, int]:
     """Parses tkinter.Entry objects into regular integers.
     """
@@ -226,3 +260,14 @@ def parse_tkinter_slider_entries(widget_entries) -> dict[str, int]:
                 widget_dict[key] = 1  # Give a default weighting
 
     return widget_dict
+
+
+if __name__ == '__main__':
+    import python_ta
+
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'disable': ['E1136', 'W0221'],
+        'extra-imports': ['csv', 'networkx', 'pandas', "math", "tkinter", "graph", "vertex"],
+        'max-nested-blocks': 4,
+    })
