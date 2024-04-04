@@ -6,6 +6,7 @@ from graph import WeightedGraph
 from meal_picker import MealPicker
 from side_panel import SidePanel
 from vertex import WeightedVertex
+from tkinter import messagebox
 
 
 class WelcomePage(tk.Frame):
@@ -35,7 +36,6 @@ class WelcomePage(tk.Frame):
         """
         Actions when 'Continue' is clicked
         """
-
         main_graph = None
         nutritional_info = None
         if self.first_click:
@@ -71,6 +71,21 @@ class WelcomePage(tk.Frame):
         # print(main_graph.get_all_vertices("food"))
         # print(main_graph.get_all_vertices("dessert"))
         # print(main_graph.get_all_vertices("drink"))
+
+    def on_help(self):
+        """
+        Actions when 'Help' is pressed on the display console.
+        """
+
+        help_message = ("This is a long paragraph that contains multiple lines of text. It serves as an example \n to "
+                        "demonstrate how to display a lengthy message in a Tkinter messagebox. You can include \n as "
+                        "much text as you need in this paragraph. \n"
+                        "- Note 1: Remember to include all relevant details. \n"
+                        "- Note 2: Keep the message clear and concise. \n"
+                        "- Note 3: Consider the readability of the text. \n"
+                        "Feel free to customize this paragraph and add your own content. \n")
+
+        messagebox.showinfo("Long Paragraph and Notes", help_message)
 
     def select_weightings(self):
         """
@@ -118,7 +133,8 @@ class WelcomePage(tk.Frame):
             self.sliders[nutrient] = slider
             self.slider_labels[nutrient] = label
             self.slider_entries[nutrient] = entry
-        # help_me = tk.Button(self, text="Click Me", command=onClick, height=5, width=10)
+        help_me = tk.Button(self, text="Click Me", command=self.on_help, height=2, width=10)
+        help_me.grid(row=rownum, column=0, pady='50')
 
     def on_entry_update(self, nutrient):
         """
