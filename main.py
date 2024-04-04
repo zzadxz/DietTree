@@ -6,18 +6,20 @@ from side_panel import SidePanel
 
 
 def load_meal_data(filepath):
-    """Load meal data from a CSV file.
+    """
+    Load meal data from a CSV file.
     """
     with open(filepath, mode='r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         return list(reader)
 
 
-database = load_meal_data('database.csv')
+database = load_meal_data('data.csv')
 
 
 class MainApplication(tk.Tk):
-    """Main application window.
+    """
+    Main application window.
     """
 
     def __init__(self):
@@ -44,7 +46,8 @@ class MainApplication(tk.Tk):
 
 
 def main():
-    """Main function to run the application.
+    """
+    Main function to run the application.
     """
     app = MainApplication()
     app.mainloop()
