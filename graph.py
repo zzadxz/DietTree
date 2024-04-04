@@ -148,7 +148,7 @@ class WeightedGraph(Graph):
         v2 = self._vertices[item2]
         return v1.neighbours.get(v2, 0)
 
-    def get_vertex(self, target) -> WeightedVertex | None:
+    def get_vertex(self, target: str) -> WeightedVertex | None:
         """
         Return the following vertex based on the target that the vertex.item has.
         """
@@ -325,6 +325,6 @@ if __name__ == '__main__':
     python_ta.check_all(config={
         'max-line-length': 120,
         'disable': ['E1136', 'W0221'],
-        'extra-imports': ['csv', 'networkx', 'pandas'],
+        'extra-imports': ['csv', 'networkx', 'pandas', 'typing', 'vertex', 'pandas'],
         'max-nested-blocks': 4,
     })
