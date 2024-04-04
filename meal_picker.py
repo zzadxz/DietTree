@@ -6,10 +6,10 @@ class MealPicker(tk.Frame):
     """Meal picker for the application.
 
     Instance Attributes:
-        - parent: TODO
-        - database: TODO
-        - side_panel: TODO
-        - create_widget: TODO
+        - parent: The parent object or container.
+        - database: The database containing meal data.
+        - side_panel: The side panel object for nutritional preferences.
+        - selected: The currently selected item.
     Representation Invariants:
         - TODO
     """

@@ -10,6 +10,9 @@ from typing import Dict, Optional, Tuple
 
 class SidePanel(tk.Frame):
     """Side panel for the application.
+
+    Instance Attributes:
+    - parent: The parent object or container.
     """
     parent: Optional[tk.Frame]
     sliders: dict[str, tk.Scale]
