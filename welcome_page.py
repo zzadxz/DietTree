@@ -1,4 +1,4 @@
-"""YOUR DOCSTRING HERE"""
+"""Main module for the right hand side of the application."""
 
 import tkinter as tk
 from tkinter import messagebox
