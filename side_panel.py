@@ -12,7 +12,12 @@ class SidePanel(tk.Frame):
     """Side panel for the application.
 
     Instance Attributes:
-    - parent: The parent object or container.
+    - parent: The parent frame for the sliders
+    - sliders: A mapping of nutrient names to their corresponding slider widgets.
+    - slider_labels: A mapping of nutrient names to their corresponding label widgets.
+    - slider_entries: A mapping of nutrient names to their corresponding entry widgets.
+    - nutrients: A mapping of nutrients and their associated values.
+
     """
     parent: Optional[tk.Frame]
     sliders: dict[str, tk.Scale]
