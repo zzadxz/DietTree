@@ -41,6 +41,7 @@ class WelcomePage(tk.Frame):
         """
         if not self.in_click:
             self.in_click = True
+            self.parent.meal_picker.not_searching = True
 
         if self.first_click:
             categories_increments = {'Calories': 100, 'Protein (g)': 10, 'Carbs (g)': 10, 'Sugars (g)': 5,
@@ -59,6 +60,9 @@ class WelcomePage(tk.Frame):
 
         slider_entries, _ = self.return_slider_entries()
         slider_entries = parse_tkinter_slider_entries(slider_entries)
+        print(slider_entries)
+        num_of_recs = slider_entries.pop('NUM RECS', None)
+        print(num_of_recs)
 
         selected_food = self.main_graph.get_vertex(self.selected_item)
         print(selected_food)
@@ -66,7 +70,7 @@ class WelcomePage(tk.Frame):
         food_messages = []
         if selected_food is not None:
             recommended_meals = self.main_graph.recommend_meal(food=self.selected_item,
-                                                               limit=10,
+                                                               limit=num_of_recs,
                                                                weighting=slider_entries)
             print(recommended_meals)
             for food in recommended_meals:
@@ -76,6 +80,7 @@ class WelcomePage(tk.Frame):
             self.parent.meal_picker.results_listbox.delete(0, tk.END)
             for meal_name in food_messages:
                 self.parent.meal_picker.results_listbox.insert(tk.END, meal_name)
+            self.parent.meal_picker.search_button.config(text="Reset")
 
     def on_help(self):
         """
@@ -101,12 +106,12 @@ class WelcomePage(tk.Frame):
         self.slider_labels = {}
         self.slider_entries = {}
 
-        nutrients = {'Protein (g)', 'Carbs (g)', 'Total Fat (g)', 'Calories', 'Sugars (g)'}
+        nutrients = {'Protein (g)', 'Carbs (g)', 'Total Fat (g)', 'Calories', 'Sugars (g)', 'NUM RECS'}
 
         rownum = 2
         colnum = 0
+        frame = tk.Frame(self)
         for nutrient in nutrients:
-            frame = tk.Frame(self)
             if rownum == 0:
                 frame.grid(row=rownum, column=colnum, padx=10, pady=(50, 0))
             frame.grid(row=rownum, column=colnum, padx=10)
@@ -128,7 +133,7 @@ class WelcomePage(tk.Frame):
             slider = tk.Scale(frame, from_=0, to=10, orient='horizontal',
                               command=lambda value, nt=nutrient: self.update_entry_from_slider(nt))
 
-            slider.grid(row=rownum - 1, column=colnum + 1, padx=50, pady=20)
+            slider.grid(row=rownum - 1, column=colnum + 1, padx=50, pady=15)
             slider.bind('<B1-Motion>', lambda event, nt=nutrient: self.update_entry_from_slider(nt))
             rownum, colnum = rownum + 1, colnum
 
@@ -138,8 +143,27 @@ class WelcomePage(tk.Frame):
             self.sliders[nutrient] = slider
             self.slider_labels[nutrient] = label
             self.slider_entries[nutrient] = entry
+
+        label = tk.Label(frame,
+                         text="NUM RECS",
+                         font=("Roboto", "16", "bold"),
+                         width=15,
+                         justify="center")
+        label.grid(row=rownum, column=colnum)
+        rownum, colnum = rownum + 1, colnum
+
+        num_rec_entry = tk.Entry(frame, width=9)
+        num_rec_entry.grid(row=rownum, column=colnum)
+        num_rec_entry.bind('<Return>', lambda event, nt=nutrient: self.on_entry_update(nt))
+
+        num_rec_slider = tk.Scale(frame, from_=10, to=150, orient='horizontal',
+                                  command=lambda value, nt=nutrient: self.update_entry_from_slider(nt))
+
+        num_rec_slider.grid(row=rownum - 1, column=colnum + 1, padx=50, pady=15)
+        num_rec_entry.bind('<B1-Motion>', lambda event, nt=nutrient: self.update_entry_from_slider(nt))
+
         help_me = tk.Button(self, text="Click Me", command=self.on_help, height=2, width=10)
-        help_me.grid(row=rownum, column=0, pady='50')
+        help_me.grid(row=rownum, column=0, pady='30')
 
     def on_entry_update(self, nutrient):
         """
