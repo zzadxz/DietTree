@@ -147,6 +147,15 @@ class WeightedGraph(Graph):
         v2 = self._vertices[item2]
         return v1.neighbours.get(v2, 0)
 
+    def get_vertex(self, target) -> WeightedVertex | None:
+        """
+        Return the following vertex based on the target that the vertex.item has.
+        """
+        if target in self._vertices:
+            return self._vertices[target]
+        else:
+            return None
+
     def get_similarity_score(self, main_food: Any, sample_food: Any, weighting: dict[str, float]) -> float:
         """Return the similarity score between the two given items in this graph.
 
@@ -181,7 +190,7 @@ class WeightedGraph(Graph):
         else:
             return set(self._vertices.keys())
 
-    def recommend_meal(self, food: str, limit: int, weighting: dict[str, float]) -> list[str]:
+    def recommend_meal(self, food: str, limit: int, weighting: dict[str, float]) -> list[WeightedVertex]:
         """Return a list of up to <limit> recommended books based on similarity to the given book.
 
         score_type is one of 'unweighted' or 'strict', corresponding to the
@@ -221,9 +230,9 @@ class WeightedGraph(Graph):
             if other.kind in {'food', 'dessert', 'drink'} and other.item != food:
                 score = food_vertex.vertex_similarity_score(other, weighting)
                 if score > 0:
-                    scores.append((score, other.item))
+                    scores.append((score, other))
 
-        scores.sort(key=lambda x: x[1])
+        scores.sort(key=lambda x: x[1].item)
         scores.sort(key=lambda x: x[0], reverse=True)
 
         recommendations = [title for _, title in scores][:limit]

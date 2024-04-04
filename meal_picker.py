@@ -103,6 +103,9 @@ class MealPicker(tk.Frame):
                     matches.append(meal)
 
         self.results_listbox.delete(0, tk.END)
+        # if self.parent.clicked:
+        #     ...
+        #
         for meal in matches:
             self.results_listbox.insert(tk.END,
                                         f"Company: {meal['Company']} | Item: {meal['Item']} | Calories: {meal['Calories']} | Protein: {meal['Protein (g)']}")
