@@ -8,8 +8,14 @@ from vertex import WeightedVertex
 
 
 class WelcomePage(tk.Frame):
-    """
-    Welcome page for the application.
+    """Welcome page for the application.
+
+    Instance Attributes:
+    - parent: The parent object or container.
+    - welcome_label: The label widget displaying a message.
+    - continue_button: The button widget for continuing.
+    - selected_item: The currently selected item.
+    - first_click: True if it's the first click.
     """
 
     parent: Any
@@ -46,9 +52,8 @@ class WelcomePage(tk.Frame):
         self.nutritional_info = None
         self.in_click = False
 
-    def on_continue(self) -> None:
-        """
-        Actions when 'Continue' is clicked
+    def on_continue(self):
+        """Actions when 'Continue' is clicked
         """
         if not self.in_click:
             self.in_click = True
@@ -195,9 +200,9 @@ class WelcomePage(tk.Frame):
         self.slider_entries['NUM RECS'] = num_rec_entry
         self.slider_labels['NUM RECS'] = num_rec_label
 
-    def on_entry_update(self, nutrient: str) -> None:
-        """
-        Update the slider position based on the manual entry value.
+
+    def on_entry_update(self, nutrient):
+        """Update the slider position based on the manual entry value.
         """
         try:
             value = int(self.slider_entries[nutrient].get())
@@ -209,9 +214,9 @@ class WelcomePage(tk.Frame):
             self.slider_entries[nutrient].delete(0, tk.END)
             self.slider_entries[nutrient].insert(0, str(self.sliders[nutrient].get()))
 
-    def update_entry_from_slider(self, nutrient: str) -> None:
-        """
-        Update the entry box value from the slider value.
+
+    def update_entry_from_slider(self, nutrient):
+        """Update the entry box value from the slider value.
         """
         value = self.sliders[nutrient].get()
         entry = self.slider_entries[nutrient]
@@ -219,8 +224,7 @@ class WelcomePage(tk.Frame):
         entry.insert(0, str(value))
 
     def return_slider_entries(self) -> tuple[dict[str, tk.Entry], dict[str, tk.Label]]:
-        """
-        Returns the entry that was entered for the weighting of nutrients.
+        """Returns the entry that was entered for the weighting of nutrients.
 
         Returns in the order: slider_entries, slider_labels
         """
@@ -228,8 +232,7 @@ class WelcomePage(tk.Frame):
 
 
 def concatenate_meal_name(food: WeightedVertex, nutritional_info: dict[str, dict[str, Any]]) -> str:
-    """
-    Returns the restaurant, food, calories, protein in the order.
+    """Returns the restaurant, food, calories, protein in the order.
     """
     current_food = nutritional_info[food.item]
     company_name, meal_name, calories, protein = current_food['Company'], current_food['Item'], \
@@ -239,9 +242,9 @@ def concatenate_meal_name(food: WeightedVertex, nutritional_info: dict[str, dict
     return f'{company_name} | {meal_name} | Calories: {calories} | Protein: {protein}'
 
 
-def parse_tkinter_slider_entries(widget_entries: dict) -> dict[str, int]:
-    """
-    Parses tkinter.Entry objects into regular integers.
+
+def parse_tkinter_slider_entries(widget_entries) -> dict[str, int]:
+    """Parses tkinter.Entry objects into regular integers.
     """
 
     widget_dict = {}
