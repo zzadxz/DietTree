@@ -33,6 +33,7 @@ class WelcomePage(tk.Frame):
         self.first_click = True
         self.main_graph = None
         self.nutritional_info = None
+        self.in_recommend_mode = False
 
     def on_continue(self):
         """
@@ -47,6 +48,8 @@ class WelcomePage(tk.Frame):
             # print(self.nutritional_info)
             self.first_click = False
 
+        if not self.in_recommend_mode:
+            ...
             # self.parent.meal_picker.results_listbox.delete(0, tk.END)
             # for meal in matches:
             #     self.results_listbox.insert(tk.END,
