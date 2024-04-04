@@ -1,10 +1,18 @@
 import tkinter as tk
-from graph import WeightedGraph
 
 
 class MealPicker(tk.Frame):
     """
     Meal picker for the application.
+
+    Instance Attributes:
+        - parent: The parent object or container.
+        - database: The database containing meal data.
+        - side_panel: The side panel object for nutritional preferences.
+        - selected: The currently selected item
+
+    Representation Invariants:
+        - TODO
     """
 
     def __init__(self, parent, database, side_panel, *args, **kwargs):
@@ -39,7 +47,8 @@ class MealPicker(tk.Frame):
 
     def search_meals(self):
         """
-        TODO
+        Uses meal name and slider values to filter through a database of meals according to the specified ranges of
+        nutritional preferences. Then displays the filtered meals and associated information.
         """
         meal_name = self.meal_entry.get().lower()
         slider_values = self.side_panel.get_slider_values()
@@ -62,8 +71,10 @@ class MealPicker(tk.Frame):
         }
 
         def parse_value(value):
-            """
-            TODO
+            """ Returns value as a float.
+
+            If value begins with a '<' returns 0.5
+            If value cannot be converted into a float returns 0
             """
             if value.strip() == 'NA' or not value.strip():
                 return 0
@@ -103,8 +114,8 @@ class MealPicker(tk.Frame):
                                         f"Company: {meal['Company']} | Item: {meal['Item']} | Calories: {meal['Calories']} | Protein: {meal['Protein (g)']}")
 
     def return_similar_meals(self):
-        """
-        TODO
+        """ Returns the currently selected food item if available.
+        If not, returns None.
         """
         try:
             return self.results_listbox.get(self.results_listbox.curselection())
@@ -116,7 +127,7 @@ if __name__ == '__main__':
     # You can uncomment the following lines for code checking/debugging purposes.
     # However, we recommend commenting out these lines when working with the large
     # datasets, as checking representation invariants and preconditions greatly
-    # # increases the running time of the functions/methods.
+    # increases the running time of the functions/methods.
     import python_ta.contracts
 
     python_ta.contracts.check_all_contracts()
