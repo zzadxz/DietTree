@@ -31,10 +31,6 @@ class MainApplication(tk.Tk):
         self.title('DietTree Project')
         self.geometry(f'{screen_width}x{screen_height}')
 
-        # self.background_image = tk.PhotoImage(file='fancy_tree.png')
-        # self.background_label = tk.Label(self, image=self.background_image)
-        # self.background_label.place(relx=0, rely=0, relwidth=1, relheight=1)
-
         self.welcome_page = WelcomePage(self)
         self.welcome_page.pack(side='right', fill='both', expand=True)
 
@@ -53,10 +49,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    # You can uncomment the following lines for code checking/debugging purposes.
-    # However, we recommend commenting out these lines when working with the large
-    # datasets, as checking representation invariants and preconditions greatly
-    # increases the running time of the functions/methods.
 
     import doctest
 
