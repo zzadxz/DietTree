@@ -118,6 +118,7 @@ class WelcomePage(tk.Frame):
             self.sliders[nutrient] = slider
             self.slider_labels[nutrient] = label
             self.slider_entries[nutrient] = entry
+        # help_me = tk.Button(self, text="Click Me", command=onClick, height=5, width=10)
 
     def on_entry_update(self, nutrient):
         """
