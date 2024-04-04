@@ -33,7 +33,8 @@ class MealPicker(tk.Frame):
         self.meal_entry = tk.Entry(self)
         self.meal_entry.pack(padx=200, pady=(0, 10), fill='x')
 
-        self.search_button = tk.Button(self, text="Search", command=self.search_meals, width=10, height=2)
+        self.search_button = tk.Button(self, text="Search", command=self.search_meals, width=10, height=2,
+                                       activebackground='gray')
         self.search_button.pack(pady=(0, 20))
 
         self.results_listbox = tk.Listbox(self, width=100, height=500)
