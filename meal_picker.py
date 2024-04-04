@@ -3,8 +3,15 @@ from graph import WeightedGraph
 
 
 class MealPicker(tk.Frame):
-    """
-    Meal picker for the application.
+    """Meal picker for the application.
+
+    Instance Attributes:
+        - parent: TODO
+        - database: TODO
+        - side_panel: TODO
+        - create_widget: TODO
+    Representation Invariants:
+        - TODO
     """
 
     def __init__(self, parent, database, side_panel, *args, **kwargs):
@@ -17,8 +24,7 @@ class MealPicker(tk.Frame):
         self.selected = None
 
     def create_widgets(self):
-        """
-        Create widgets for the meal picker.
+        """Create widgets for the meal picker.
         """
 
         self.meal_label = tk.Label(self, text="Enter meal name:")
@@ -38,8 +44,8 @@ class MealPicker(tk.Frame):
         self.results_listbox.config(yscrollcommand=scrollbar.set)
 
     def search_meals(self):
-        """
-        TODO
+        """Uses meal name and slider values to filter through a database of meals according to the specified ranges of
+        nutritional preferences. Then displays the filtered meals and associated information.
         """
         meal_name = self.meal_entry.get().lower()
         slider_values = self.side_panel.get_slider_values()
@@ -62,8 +68,10 @@ class MealPicker(tk.Frame):
         }
 
         def parse_value(value):
-            """
-            TODO
+            """Returns value as a float.
+
+            If value begins with a '<' returns 0.5
+            If value cannot be converted into a float returns 0
             """
             if value.strip() == 'NA' or not value.strip():
                 return 0
@@ -100,8 +108,8 @@ class MealPicker(tk.Frame):
                                         f"Company: {meal['Company']} | Item: {meal['Item']} | Calories: {meal['Calories']} | Protein: {meal['Protein (g)']}")
 
     def return_similar_meals(self):
-        """
-        TODO
+        """Returns the currently selected food item if available.
+        If not, returns None.
         """
         try:
             return self.results_listbox.get(self.results_listbox.curselection())
