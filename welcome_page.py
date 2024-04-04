@@ -1,10 +1,7 @@
 import tkinter as tk
-from typing import Any, Dict
+from typing import Any
 
-from graph import WeightedGraph, load_graph
-# from graph import load_graph
-from meal_picker import MealPicker
-from side_panel import SidePanel
+from graph import load_graph
 from vertex import WeightedVertex
 from tkinter import messagebox
 
@@ -26,7 +23,8 @@ class WelcomePage(tk.Frame):
                                          command=self.on_continue,
                                          font=("Roboto", 18),
                                          width=25,
-                                         height=2)
+                                         height=2,
+                                         activebackground='gray')
         self.continue_button.grid(row=1, column=0)
         self.select_weightings()
         self.selected_item = None
@@ -54,32 +52,31 @@ class WelcomePage(tk.Frame):
 
         self.selected_item = self.parent.meal_picker.return_similar_meals()
         _, food_name, _, _ = self.selected_item.split(" | ")
-        print(self.selected_item)
         _, self.selected_item = food_name.split(": ")
-        print(self.selected_item)
 
         slider_entries, _ = self.return_slider_entries()
         slider_entries = parse_tkinter_slider_entries(slider_entries)
-        print(slider_entries)
         num_of_recs = slider_entries.pop('NUM RECS', None)
-        print(num_of_recs)
+        if num_of_recs < 5:
+            num_of_recs = 5
 
         selected_food = self.main_graph.get_vertex(self.selected_item)
-        print(selected_food)
 
         food_messages = []
         if selected_food is not None:
             recommended_meals = self.main_graph.recommend_meal(food=self.selected_item,
                                                                limit=num_of_recs,
                                                                weighting=slider_entries)
-            print(recommended_meals)
             for food in recommended_meals:
                 food_messages.append(concatenate_meal_name(food, self.nutritional_info))
 
         if self.in_click:
             self.parent.meal_picker.results_listbox.delete(0, tk.END)
-            for meal_name in food_messages:
-                self.parent.meal_picker.results_listbox.insert(tk.END, meal_name)
+            if food_messages != []:
+                for meal_name in food_messages:
+                    self.parent.meal_picker.results_listbox.insert(tk.END, meal_name)
+            else:
+                self.parent.meal_picker.results_listbox.insert(tk.END, 'No available recommendations!')
             self.parent.meal_picker.search_button.config(text="Reset")
 
     def on_help(self):
@@ -106,7 +103,7 @@ class WelcomePage(tk.Frame):
         self.slider_labels = {}
         self.slider_entries = {}
 
-        nutrients = {'Protein (g)', 'Carbs (g)', 'Total Fat (g)', 'Calories', 'Sugars (g)', 'NUM RECS'}
+        nutrients = ['Protein (g)', 'Carbs (g)', 'Total Fat (g)', 'Calories', 'Sugars (g)']
 
         rownum = 2
         colnum = 0
@@ -139,31 +136,32 @@ class WelcomePage(tk.Frame):
 
             self.sliders[nutrient] = slider
             self.slider_entries[nutrient] = entry
-
-            self.sliders[nutrient] = slider
             self.slider_labels[nutrient] = label
-            self.slider_entries[nutrient] = entry
 
-        label = tk.Label(frame,
-                         text="NUM RECS",
-                         font=("Roboto", "16", "bold"),
-                         width=15,
-                         justify="center")
-        label.grid(row=rownum, column=colnum)
+        num_rec_label = tk.Label(frame,
+                                 text="NUM RECS",
+                                 font=("Roboto", "16", "bold"),
+                                 width=15,
+                                 justify="center")
+        num_rec_label.grid(row=rownum, column=colnum)
         rownum, colnum = rownum + 1, colnum
 
         num_rec_entry = tk.Entry(frame, width=9)
         num_rec_entry.grid(row=rownum, column=colnum)
-        num_rec_entry.bind('<Return>', lambda event, nt=nutrient: self.on_entry_update(nt))
+        num_rec_entry.bind('<Return>', lambda _, nt='NUM RECS': self.on_entry_update(nt))
 
-        num_rec_slider = tk.Scale(frame, from_=10, to=150, orient='horizontal',
-                                  command=lambda value, nt=nutrient: self.update_entry_from_slider(nt))
+        num_rec_slider = tk.Scale(frame, from_=5, to=150, orient='horizontal',
+                                  command=lambda _, nt='NUM RECS': self.update_entry_from_slider(nt))
 
         num_rec_slider.grid(row=rownum - 1, column=colnum + 1, padx=50, pady=15)
-        num_rec_entry.bind('<B1-Motion>', lambda event, nt=nutrient: self.update_entry_from_slider(nt))
+        num_rec_entry.bind('<B1-Motion>', lambda _, nt='NUMRECS': self.update_entry_from_slider(nt))
 
-        help_me = tk.Button(self, text="Click Me", command=self.on_help, height=2, width=10)
+        help_me = tk.Button(self, text="Click Me", command=self.on_help, height=2, width=10, activebackground='gray')
         help_me.grid(row=rownum, column=0, pady='30')
+
+        self.sliders['NUM RECS'] = num_rec_slider
+        self.slider_entries['NUM RECS'] = num_rec_entry
+        self.slider_labels['NUM RECS'] = num_rec_label
 
     def on_entry_update(self, nutrient):
         """
@@ -205,7 +203,7 @@ def concatenate_meal_name(food: WeightedVertex, nutritional_info: dict[str, dict
     company_name, meal_name, calories, protein = current_food['Company'], current_food['Item'], \
         current_food['Calories'], current_food['Protein (g)']
 
-    print(f'{company_name} | {meal_name} | Calories: {calories} | Protein: {protein}')
+    # print(f'{company_name} | {meal_name} | Calories: {calories} | Protein: {protein}')
     return f'{company_name} | {meal_name} | Calories: {calories} | Protein: {protein}'
 
 
