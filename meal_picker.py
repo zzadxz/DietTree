@@ -45,11 +45,11 @@ class MealPicker(tk.Frame):
         slider_values = self.side_panel.get_slider_values()
 
         nutrient_ranges = {
-            'calories': (lambda v: (v - 100, v + 100)),
-            'protein': (lambda v: (v - 5, v + 5)),
-            'total_carb': (lambda v: (v - 10, v + 10)),
-            'sugar': (lambda v: (v - 5, v + 5)),
-            'total_fat': (lambda v: (v - 10, v + 10)),
+            'Calories': (lambda v: (v - 100, v + 100)),
+            'Protein (g)': (lambda v: (v - 5, v + 5)),
+            'Carbs (g)': (lambda v: (v - 10, v + 10)),
+            'Sugars (g)': (lambda v: (v - 5, v + 5)),
+            'Total Fat (g)': (lambda v: (v - 10, v + 10)),
         }
         # (abs.(500/700) * 10) + (abs.(10/5) * 5)  = 10
         # add_edge(big_mac, whopper, 10)
@@ -62,22 +62,29 @@ class MealPicker(tk.Frame):
         # f2 = whopper
         matches = []
         target_meals = ['calories', 'protein', 'total_carb', 'sugar', 'total_fat']
+        adjusted_meal = {
+            'calories': 'Calories',
+            'protein': 'Protein (g)',
+            'total_carb': 'Carbs (g)',
+            'sugar': 'Sugars (g)',
+            'total_fat': 'Total Fat (g)'
+        }
 
+        matches = []
         for meal in self.database:
-            adjusted_meal = {k: int(v) if v != 'NA' else v for k, v in meal.items() if k in target_meals}
-            if meal_name.lower() in meal['item'].lower():
+            adjusted_meal = {
+                k: float(v) if v.strip() and v != 'NA' and not v.startswith('<') else 0.5 if v.startswith('<') else 0
+                for k, v in meal.items() if k in nutrient_ranges
+            }
+            if meal_name.lower() in meal['Item'].lower():
                 within_range = True
                 for nutrient, get_range in nutrient_ranges.items():
                     slider_value = slider_values.get(nutrient)
                     if slider_value is None or slider_value == 0:
                         continue
                     range_min, range_max = get_range(slider_values[nutrient])
-                    if meal[nutrient] != 'NA':
-                        meal_value = int(meal[nutrient])
-                        if not (range_min <= meal_value <= range_max):
-                            within_range = False
-                            break
-                    else:
+                    meal_value = adjusted_meal.get(nutrient, 0)
+                    if not (range_min <= meal_value <= range_max):
                         within_range = False
                         break
                 if within_range:
@@ -86,7 +93,7 @@ class MealPicker(tk.Frame):
         self.results_listbox.delete(0, tk.END)
         for meal in matches:
             self.results_listbox.insert(tk.END,
-                                        f"Restaurant: {meal['restaurant']} | {meal['item']} | Calories: {meal['calories']} | Protein: {meal['protein']}")
+                                        f"Company: {meal['Company']} | Item: {meal['Item']} | Calories: {meal['Calories']} | Protein: {meal['Protein (g)']}")
 
     def return_similar_meals(self):
         """

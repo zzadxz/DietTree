@@ -14,7 +14,7 @@ def load_meal_data(filepath):
         return list(reader)
 
 
-database = load_meal_data('database.csv')
+database = load_meal_data('data.csv')
 
 
 class MainApplication(tk.Tk):

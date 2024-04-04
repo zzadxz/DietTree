@@ -237,7 +237,7 @@ def preprocess_dataframe(df: pd.DataFrame, categories: dict[str, int]) -> pd.Dat
     return df.dropna(subset=categories.keys(), how='all')
 
 
-def add_nutritional_edges(row: pd.Series, graph: Graph, categories: dict[str, int]) -> None:
+def add_nutritional_edges(row: pd.Series, graph: WeightedGraph, categories: dict[str, int]) -> None:
     """Adds all the required edges between vertices initialized from each row in our csv"""
 
     item_name = row['Item']  # This comes from the filtered/preprocessed DataFrame
@@ -267,7 +267,7 @@ def load_graph(food_file: str, categories: dict[str, int]) -> (Graph, dict[Any, 
     Preconditions:
         - reviews_file is the path to a CSV file corresponding to the food datase
     """
-    graph = Graph()
+    graph = WeightedGraph()
     df = pd.read_csv(food_file)
     nutritional_info = {}
 
