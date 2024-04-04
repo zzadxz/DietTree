@@ -89,15 +89,18 @@ class WelcomePage(tk.Frame):
         """Actions when 'Help' is pressed on the display console.
         """
 
-        help_message = ("This is a long paragraph that contains multiple lines of text. It serves as an example \n to "
-                        "demonstrate how to display a lengthy message in a Tkinter messagebox. You can include \n as "
-                        "much text as you need in this paragraph. \n"
-                        "- Note 1: Remember to include all relevant details. \n"
-                        "- Note 2: Keep the message clear and concise. \n"
-                        "- Note 3: Consider the readability of the text. \n"
-                        "Feel free to customize this paragraph and add your own content. \n")
+        help_message = ("1. Find your base food item."
+                        "      a. Adjust sliders or type in the boxes on the left panel to set nutritional values, or\n"
+                        "      b. Directly search for a meal by typing in the text box above the search button. \n"
+                        "2. Press \"Search\" and select a meal with either similar nutritional values or a similar \n"
+                        "   name as the one you specified. \n"
+                        "3. (Optional) Adjust sliders or type in the boxes on the right panel to set the weights for \n"
+                        "   each nutritional value. The higher the number, the more importance that value will hold.\n"
+                        "4. Press \"Find closest meal\" to get a list of meals that are similar! \n"
+                        "\n"
+                        "Reset Buttion: To reset values on the left panel to 0, press the \"Reset Sliders\" button.")
 
-        messagebox.showinfo("Long Paragraph and Notes", help_message)
+        messagebox.showinfo("Help", help_message)
 
     def select_weightings(self):
         """Set up sliders for the weightings panel on the right.
