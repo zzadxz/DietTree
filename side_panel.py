@@ -9,7 +9,8 @@ from typing import Dict, Optional, Tuple
 
 
 class SidePanel(tk.Frame):
-    """Side panel for the application.
+    """
+    Side panel for the application.
     """
     parent: Optional[tk.Frame]
     sliders: dict[str, tk.Scale]
@@ -23,14 +24,14 @@ class SidePanel(tk.Frame):
         self.setup_sliders()
 
     def setup_sliders(self) -> None:
-        """Set up sliders for the side panel.
+        """
+        Set up sliders for the side panel.
         """
         self.sliders = {}
         self.slider_labels = {}
         self.slider_entries = {}
 
-        self.nutrients = {'Protein (g)': 300, 'Carbs (g)': 500, 'Total Fat (g)': 300, 'Calories': 5000,
-                          'Sugars (g)': 300}
+        self.nutrients = {'Protein (g)': 300, 'Carbs (g)': 500, 'Total Fat (g)': 300, 'Calories': 5000, 'Sugars (g)': 300}
 
         rownum = 0
         colnum = 0
@@ -64,11 +65,9 @@ class SidePanel(tk.Frame):
             self.slider_labels[nutrient] = label
             self.slider_entries[nutrient] = entry
 
-            self.reset_button = tk.Button(self, text="Reset Sliders", command=self.reset_sliders)
-            self.reset_button.grid(row=len(self.nutrients) + 15, column=0, pady=10, padx=10, columnspan=2)
-
     def get_slider_values(self) -> dict:
-        """Get AND return the current values of the sliders.
+        """
+        Get AND return the current values of the sliders.
         """
         values = {}
         for nutrient, slider in self.sliders.items():
@@ -83,7 +82,8 @@ class SidePanel(tk.Frame):
         return values
 
     def update_slider_value(self, nutrient: str, value: int) -> None:
-        """Update the label with the current slider value.
+        """
+        Update the label with the current slider value.
         """
         # label = self.slider_labels[nutrient]
 
@@ -93,7 +93,8 @@ class SidePanel(tk.Frame):
             entry.insert(0, str(value))
 
     def on_entry_update(self, nutrient: str) -> None:
-        """Update the slider position based on the manual entry value.
+        """
+        Update the slider position based on the manual entry value.
         """
         try:
             value = int(self.slider_entries[nutrient].get())
@@ -106,21 +107,13 @@ class SidePanel(tk.Frame):
             self.slider_entries[nutrient].insert(0, str(self.sliders[nutrient].get()))
 
     def update_entry_from_slider(self, nutrient: str) -> None:
-        """Update the entry box value from the slider value.
+        """
+        Update the entry box value from the slider value.
         """
         value = self.sliders[nutrient].get()
         entry = self.slider_entries[nutrient]
         entry.delete(0, tk.END)
         entry.insert(0, str(value))
-
-    def reset_sliders(self):
-        """Reset all sliders to their minimum value.
-        """
-        for slider in self.sliders.values():
-            slider.set(0)
-        for entry in self.slider_entries.values():
-            entry.delete(0, tk.END)
-            entry.insert(0, str(0))
 
 
 if __name__ == '__main__':
