@@ -91,7 +91,9 @@ class MealPicker(tk.Frame):
 
     def meal_fits_criteria(self, meal: dict, nutrient_ranges: dict, slider_values: dict) -> bool:
         """
-        Determines if a meal fits within the specified nutrient ranges based on slider values. If a slider value is 0, it is ignored. If a meal does not fit within the specified ranges, return False. Otherwise, return True.
+        Determines if a meal fits within the specified nutrient ranges based on slider values.
+        If a slider value is 0, it is ignored. If a meal does not fit within the specified ranges, return False.
+        Otherwise, return True.
         """
         for nutrient, get_range in nutrient_ranges.items():
             slider_value = slider_values.get(nutrient)
@@ -106,7 +108,8 @@ class MealPicker(tk.Frame):
     def search_meals(self) -> None:
         """
         Filter through a database of meals based on nutritional preferences.
-        The search is based on the meal name and the nutritional preferences set by the user. If a meal fits the criteria, it is displayed in the results listbox.
+        The search is based on the meal name and the nutritional preferences set by the user.
+        If a meal fits the criteria, it is displayed in the results listbox.
         """
         if self.not_searching:
             self.search_button.config(text="Search")
