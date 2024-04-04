@@ -22,21 +22,21 @@ class MealPicker(tk.Frame):
         self.create_widgets()
         self.pack(fill='both', expand=True)
         self.selected = None
+        self.not_searching = False
 
     def create_widgets(self):
         """Create widgets for the meal picker.
         """
-
         self.meal_label = tk.Label(self, text="Enter meal name:")
         self.meal_label.pack(padx=10, pady=(10, 0))
 
         self.meal_entry = tk.Entry(self)
         self.meal_entry.pack(padx=200, pady=(0, 10), fill='x')
 
-        self.search_button = tk.Button(self, text="Search", command=self.search_meals)
+        self.search_button = tk.Button(self, text="Search", command=self.search_meals, width=10, height=2)
         self.search_button.pack(pady=(0, 20))
 
-        self.results_listbox = tk.Listbox(self, width=100)
+        self.results_listbox = tk.Listbox(self, width=100, height=500)
         self.results_listbox.pack(side='left', fill='both', expand=True)
 
         scrollbar = tk.Scrollbar(self, orient='vertical', command=self.results_listbox.yview)
@@ -47,6 +47,10 @@ class MealPicker(tk.Frame):
         """Uses meal name and slider values to filter through a database of meals according to the specified ranges of
         nutritional preferences. Then displays the filtered meals and associated information.
         """
+        if self.not_searching:
+            self.not_searching = True
+            self.search_button.config(text="Search")
+
         meal_name = self.meal_entry.get().lower()
         slider_values = self.side_panel.get_slider_values()
 
