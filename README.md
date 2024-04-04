@@ -2,6 +2,7 @@
 
 ## Introduction
 
+The link to our GitHub repository can be found here: https://github.com/zzadxz/DietTree
 The Meal Picker application is designed to help users discover meals that match their dietary preferences and nutritional goals. Utilizing a simple yet powerful graphical user interface (GUI) built with Tkinter, the application allows users to search for meals based on specific nutritional criteria, explore similar meal options, and receive recommendations tailored to their needs. Whether you're looking for low-carb options, high-protein meals, or anything in between, Meal Picker makes finding the right meal easy and fun.
 
 ## Getting Started
@@ -60,6 +61,10 @@ The Meal Picker application is comprised of several key components, each contrib
 ## Resetting Sliders
 
 To reset all sliders to their default values, click the "Reset Sliders" button located at the bottom of the side panel. This allows you to start a new search with fresh criteria.
+
+## Final Notes
+
+Some PyTA errors were not easily fixable, for example, the limit for the number of local variables for different classes for our UI classes is somehow redundant since UI classes don't usually become more complex and hard to understand as the number of components increase. One other problem we faced was the ```PEP 8: E131 continuation line unaligned for hanging indent``` error which PyCharm was unable to solve and after reformatting the code multuple times, the problem insisted. We hope these two trivial PyTA errors don't impact your user experience!
 
 ## Have a happy time using AltMeal!
 Thank you for taking the time to read the README.md, and our team truly hopes that you find this app useful. Contributions to the Meal Picker application are also very welcome! Whether you're interested in adding new features, improving the UI, or refining the meal recommendation algorithm, we value your input. Please feel free to submit issues and pull requests. Happy finding AltMeals :)
