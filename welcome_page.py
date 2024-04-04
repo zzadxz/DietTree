@@ -52,8 +52,11 @@ class WelcomePage(tk.Frame):
         self.nutritional_info = None
         self.in_click = False
 
-    def on_continue(self):
-        """Actions when 'Continue' is clicked
+    def on_continue(self) -> None:
+        """
+        Actions when 'Continue' is clicked
+
+        If the user has not clicked before, the graph is loaded and the nutritional information is stored.
         """
         if not self.in_click:
             self.in_click = True
@@ -90,7 +93,7 @@ class WelcomePage(tk.Frame):
 
         if self.in_click:
             self.parent.meal_picker.results_listbox.delete(0, tk.END)
-            if food_messages != []:
+            if food_messages:
                 for meal_name in food_messages:
                     self.parent.meal_picker.results_listbox.insert(tk.END, meal_name)
             else:
@@ -162,13 +165,13 @@ class WelcomePage(tk.Frame):
 
             entry = tk.Entry(frame, width=9)
             entry.grid(row=rownum, column=colnum)
-            entry.bind('<Return>', lambda _, nt=nutrient: self.on_entry_update(nt))
+            entry.bind('<Return>', lambda _event, nt=nutrient: self.on_entry_update(nt))
 
             slider = tk.Scale(frame, from_=0, to=10, orient='horizontal',
-                              command=lambda _, nt=nutrient: self.update_entry_from_slider(nt))
+                              command=lambda _event, nt=nutrient: self.update_entry_from_slider(nt))
 
             slider.grid(row=rownum - 1, column=colnum + 1, padx=50, pady=15)
-            slider.bind('<B1-Motion>', lambda _, nt=nutrient: self.update_entry_from_slider(nt))
+            slider.bind('<B1-Motion>', lambda _event, nt=nutrient: self.update_entry_from_slider(nt))
             rownum = rownum + 1
 
             self.sliders[nutrient] = slider
@@ -185,13 +188,13 @@ class WelcomePage(tk.Frame):
 
         num_rec_entry = tk.Entry(frame, width=9)
         num_rec_entry.grid(row=rownum, column=colnum)
-        num_rec_entry.bind('<Return>', lambda _, nt='NUM RECS': self.on_entry_update(nt))
+        num_rec_entry.bind('<Return>', lambda _event, nt='NUM RECS': self.on_entry_update(nt))
 
         num_rec_slider = tk.Scale(frame, from_=5, to=150, orient='horizontal',
-                                  command=lambda _, nt='NUM RECS': self.update_entry_from_slider(nt))
+                                  command=lambda _event, nt='NUM RECS': self.update_entry_from_slider(nt))
 
         num_rec_slider.grid(row=rownum - 1, column=colnum + 1, padx=50, pady=15)
-        num_rec_entry.bind('<B1-Motion>', lambda _, nt='NUMRECS': self.update_entry_from_slider(nt))
+        num_rec_entry.bind('<B1-Motion>', lambda _event, nt='NUMRECS': self.update_entry_from_slider(nt))
 
         help_me = tk.Button(self, text="Help me!", command=self.on_help, height=2, width=10, activebackground='gray')
         help_me.grid(row=rownum, column=0, pady='30')
@@ -200,8 +203,7 @@ class WelcomePage(tk.Frame):
         self.slider_entries['NUM RECS'] = num_rec_entry
         self.slider_labels['NUM RECS'] = num_rec_label
 
-
-    def on_entry_update(self, nutrient):
+    def on_entry_update(self, nutrient: str) -> None:
         """Update the slider position based on the manual entry value.
         """
         try:
@@ -214,8 +216,7 @@ class WelcomePage(tk.Frame):
             self.slider_entries[nutrient].delete(0, tk.END)
             self.slider_entries[nutrient].insert(0, str(self.sliders[nutrient].get()))
 
-
-    def update_entry_from_slider(self, nutrient):
+    def update_entry_from_slider(self, nutrient: str) -> None:
         """Update the entry box value from the slider value.
         """
         value = self.sliders[nutrient].get()
@@ -242,8 +243,7 @@ def concatenate_meal_name(food: WeightedVertex, nutritional_info: dict[str, dict
     return f'{company_name} | {meal_name} | Calories: {calories} | Protein: {protein}'
 
 
-
-def parse_tkinter_slider_entries(widget_entries) -> dict[str, int]:
+def parse_tkinter_slider_entries(widget_entries: dict[str, tk.Entry]) -> dict[str, int]:
     """Parses tkinter.Entry objects into regular integers.
     """
 
