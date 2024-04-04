@@ -11,11 +11,11 @@ from vertex import WeightedVertex
 class Graph:
     """
     A graph used to represent a book review network.
+    Private Instance Attributes:
+        - vertices:
+            A collection of the vertices contained in this graph.
+            Maps item to vertex object.
     """
-    # Private Instance Attributes:
-    #     - vertices:
-    #         A collection of the vertices contained in this graph.
-    #         Maps item to vertex object.
     _vertices: dict[Any, Vertex]
 
     def __init__(self) -> None:
@@ -91,11 +91,10 @@ class Graph:
 
 class WeightedGraph(Graph):
     """A weighted graph used to represent a book review network that keeps track of review scores.
+    Private Instance Attributes:
+         - _vertices: A collection of the vertices contained in this graph.
+                        Maps item to _WeightedVertex object.
     """
-    # Private Instance Attributes:
-    #     - _vertices:
-    #         A collection of the vertices contained in this graph.
-    #         Maps item to _WeightedVertex object.
     _vertices: dict[Any, WeightedVertex]
 
     def __init__(self) -> None:
@@ -311,7 +310,7 @@ if __name__ == '__main__':
     import doctest
 
     doctest.testmod(verbose=True)
-    #
+
     import python_ta
 
     python_ta.check_all(config={

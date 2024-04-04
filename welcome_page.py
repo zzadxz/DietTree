@@ -2,7 +2,7 @@ import tkinter as tk
 from typing import Any, Dict
 
 from graph import WeightedGraph
-# from graph import load_graph
+from graph import load_graph
 from meal_picker import MealPicker
 from side_panel import SidePanel
 from vertex import WeightedVertex
@@ -37,7 +37,6 @@ class WelcomePage(tk.Frame):
         """
 
         main_graph = None
-        nutritional_info = None
         if self.first_click:
             categories_increments = {'Calories': 100, 'Protein (g)': 10, 'Carbs (g)': 10, 'Sugars (g)': 5,
                                      'Total Fat (g)': 5, 'Sodium (mg)': 50}
@@ -46,7 +45,7 @@ class WelcomePage(tk.Frame):
             print(nutritional_info)
             self.first_click = False
 
-        assert main_graph is not None and nutritional_info is not None
+        assert main_graph is not None
 
         self.selected_item = self.parent.meal_picker.return_similar_meals()
         _, food_name, _, _ = self.selected_item.split(" | ")
@@ -63,9 +62,6 @@ class WelcomePage(tk.Frame):
                                                       limit=10,
                                                       weighting=slider_entries)
         print(recommended_meals)
-        food_messages = []
-        for food in recommended_meals:
-            food_messages.append(concatenate_meal_name(food, nutritional_info))
 
         # print(set(main_graph.vertices.keys()))
         # print(main_graph.get_all_vertices("food"))
@@ -118,7 +114,6 @@ class WelcomePage(tk.Frame):
             self.sliders[nutrient] = slider
             self.slider_labels[nutrient] = label
             self.slider_entries[nutrient] = entry
-        # help_me = tk.Button(self, text="Click Me", command=onClick, height=5, width=10)
 
     def on_entry_update(self, nutrient):
         """
@@ -127,9 +122,6 @@ class WelcomePage(tk.Frame):
         try:
             value = int(self.slider_entries[nutrient].get())
             self.sliders[nutrient].set(value)
-            # Checks if value is in range
-            if not (0 <= value <= 10):
-                raise ValueError
         except ValueError:
             self.slider_entries[nutrient].delete(0, tk.END)
             self.slider_entries[nutrient].insert(0, str(self.sliders[nutrient].get()))
@@ -151,16 +143,17 @@ class WelcomePage(tk.Frame):
         """
         return self.slider_entries, self.slider_labels
 
+    def concatenate_meal_name(self, food: WeightedVertex, nutritional_info: dict[str, dict[str, Any]]) -> str:
+        """
+        Returns the restaurant, food, calories, protein in the order.
+        """
+        current_food = nutritional_info[food.item]
+        company_name, meal_name, calories, protein = current_food['Company'], current_food['Item'], \
+            current_food['Calories'], current_food['Protein']
 
-def concatenate_meal_name(food: WeightedVertex, nutritional_info: dict[str, dict[str, Any]]) -> str:
-    """
-    Returns the restaurant, food, calories, protein in the order.
-    """
-    current_food = nutritional_info[food.item]
-    company_name, meal_name, calories, protein = current_food['Company'], current_food['Item'], \
-        current_food['Calories'], current_food['Protein']
+        return f'{company_name} | {meal_name} | Calories: {calories} | Protein: {protein}'
 
-    return f'{company_name} | {meal_name} | Calories: {calories} | Protein: {protein}'
+
 
 
 def parse_tkinter_slider_entries(widget_entries) -> dict[str, int]:
